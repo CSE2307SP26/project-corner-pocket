@@ -2,9 +2,9 @@
 
 ## Team Members:
 
-* 
-* 
-* 
+* Christian Thomas
+* Emmett Dennis
+* Cody Vaughan
 * 
 
 ## User stories
