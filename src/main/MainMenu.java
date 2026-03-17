@@ -38,7 +38,7 @@ public class MainMenu {
             case 1:
                 performDeposit();
             case 2:
-                displaybalance();
+                displayBalance();
         }
     }
 
@@ -51,7 +51,7 @@ public class MainMenu {
         userAccount.deposit(depositAmount);
     }
 
-    public void displaybalance() {
+    public void displayBalance() {
         System.out.println(userAccount.getBalance());
     }
 

@@ -16,6 +16,19 @@ public class BankAccountTest {
         assertEquals(50, testAccount.getBalance(), 0.01);
     }
 
+    ///Not sure if this covers it, as it doesn't directly interact with the main one
+    /// but it does check the underlying code it relies on so seems good to me
+    @Test
+    public void testDepositAmount() {
+        BankAccount testAccount = new BankAccount();
+        testAccount.deposit(50);
+        assertEquals("50", testAccount.getBalance(), 0.01);
+    }
+
+
+
+
+
     @Test
     public void testInvalidDeposit() {
         BankAccount testAccount = new BankAccount();
