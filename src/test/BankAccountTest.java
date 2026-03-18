@@ -58,6 +58,14 @@ public class BankAccountTest {
         }
     }
 
+    @Test
+    public void testTransactionHistory() {
+        BankAccount testAccount = new BankAccount();
+        testAccount.deposit( 50);
+        assertEquals("Deposited: $50.0", testAccount.transactionHistory.get(0));
+
+    }
+
 
 }
 
