@@ -95,7 +95,7 @@ public class MainMenu {
 
 
     public void displayTransactionHistory(int accountNumber) {
-        for(String line : accounts.get(accountNumber-1).transactionHistory){
+        for (String line : accounts.get(accountNumber - 1).transactionHistory) {
             System.out.println(line);
         }
     }
@@ -109,8 +109,6 @@ public class MainMenu {
         }
         accounts.get(accountNumber-1).withdraw(withdrawAmount);
     }
-
-
 
     public void run() {
         int selection = -1;
