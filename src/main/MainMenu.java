@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 5;
-	private static final int MAX_SELECTION = 5;
+    private static final int EXIT_SELECTION = 7;
+	private static final int MAX_SELECTION = 6;
 
     private Scanner keyboardInput;
     private ArrayList<BankAccount> accounts;
@@ -29,7 +29,8 @@ public class MainMenu {
         System.out.println("3. Withdraw from account");
         System.out.println("4. Check Balance");
         System.out.println("5. Check transaction history");
-        System.out.println("6. Exit the app");
+        System.out.println("6. Transfer money");
+        System.out.println("7. Exit the app");
 
     }
 
@@ -71,6 +72,13 @@ public class MainMenu {
                 displayTransactionHistory(accountNumber);
                 break;
             case 6:
+                System.out.print("From which account: ");
+                int fromAccount = keyboardInput.nextInt();
+                System.out.print("To which account: ");
+                int toAccount = keyboardInput.nextInt();
+                transferMoney(fromAccount, toAccount);
+                break;
+            case 7:
                 System.exit(0);
         }
     }
@@ -103,16 +111,26 @@ public class MainMenu {
 
     public void peformWithdraw(int accountNumber) {
         double withdrawAmount = -1;
-        while(withdrawAmount < 0) {
+        while (withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
             withdrawAmount = keyboardInput.nextInt();
         }
-        accounts.get(accountNumber-1).withdraw(withdrawAmount);
+        accounts.get(accountNumber - 1).withdraw(withdrawAmount);
+    }
+    
+    public void transferMoney(int fromAccount, int toAccount) {
+        double transferAmount = -1;
+        while (transferAmount < 0) {
+            System.out.print("How much would you like to transfer: ");
+            transferAmount = keyboardInput.nextInt();
+        }
+        accounts.get(fromAccount - 1).withdraw(transferAmount);
+        accounts.get(toAccount - 1).deposit(transferAmount);
     }
 
     public void run() {
         int selection = -1;
-        while(selection != EXIT_SELECTION) {
+        while (selection != EXIT_SELECTION) {
             displayOptions();
             selection = getUserSelection(MAX_SELECTION);
             processInput(selection);
