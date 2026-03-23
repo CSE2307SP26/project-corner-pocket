@@ -1,17 +1,23 @@
 package main;
 
 import java.util.Scanner;
+import java.util.ArrayList;
+
 
 public class MainMenu {
 
     private static final int EXIT_SELECTION = 5;
 	private static final int MAX_SELECTION = 5;
 
-	private BankAccount userAccount;
     private Scanner keyboardInput;
+    private ArrayList<BankAccount> accounts;
 
     public MainMenu() {
-        this.userAccount = new BankAccount();
+        //this.userAccount = new BankAccount();
+        this.accounts = new ArrayList<BankAccount>();
+        BankAccount userAccount = new BankAccount();
+        accounts.add(userAccount);
+
         this.keyboardInput = new Scanner(System.in);
     }
 
@@ -19,69 +25,89 @@ public class MainMenu {
         System.out.println("Welcome to the 237 Bank App!");
         
         System.out.println("1. Make a deposit");
-        System.out.println("2. Withdraw from account");
-        System.out.println("3. Check Balance");
-        System.out.println("4. Check transaction history");
-        System.out.println("5. Exit the app");
+        System.out.println("2. Create a new account");
+        System.out.println("3. Withdraw from account");
+        System.out.println("4. Check Balance");
+        System.out.println("5. Check transaction history");
+        System.out.println("6. Exit the app");
 
     }
 
     public int getUserSelection(int max) {
         int selection = -1;
-        while(selection < 1 || selection > max) {
+        while (selection < 1 || selection > max) {
             System.out.print("Please make a selection: ");
             selection = keyboardInput.nextInt();
         }
         return selection;
     }
+    
+    public int getNumber() {
+        System.out.print("Please select an account:");
+        int selection = keyboardInput.nextInt();
+        return selection;
+    }
 
     public void processInput(int selection) {
+        int accountNumber;
         switch (selection) {
             case 1:
-                performDeposit();
+                accountNumber = getNumber();
+                performDeposit(accountNumber);
                 break;
             case 2:
-                peformWithdraw();
+                createAccount();
                 break;
             case 3:
-                displayBalance();
+                accountNumber = getNumber();
+                peformWithdraw(accountNumber);
                 break;
             case 4:
-                displayTransactionHistory();
+                accountNumber = getNumber();
+                displayBalance(accountNumber);
                 break;
             case 5:
+                accountNumber = getNumber();
+                displayTransactionHistory(accountNumber);
+                break;
+            case 6:
                 System.exit(0);
         }
     }
 
-    public void performDeposit() {
+    public void createAccount() {
+        BankAccount newAccount = new BankAccount();
+        accounts.add(newAccount);
+    }
+
+    public void performDeposit(int accountNumber) {
         double depositAmount = -1;
         while(depositAmount < 0) {
             System.out.print("How much would you like to deposit: ");
             depositAmount = keyboardInput.nextInt();
         }
-        userAccount.deposit(depositAmount);
+        accounts.get(accountNumber-1).deposit(depositAmount);
     }
 
-    public void displayBalance() {
-        System.out.println(userAccount.getBalance());
+    public void displayBalance(int accountNumber) {
+        System.out.println(accounts.get(accountNumber-1).getBalance());
     }
 
 
-    public void displayTransactionHistory() {
-        for(String line : userAccount.transactionHistory){
+    public void displayTransactionHistory(int accountNumber) {
+        for(String line : accounts.get(accountNumber-1).transactionHistory){
             System.out.println(line);
         }
     }
     
 
-    public void peformWithdraw() {
+    public void peformWithdraw(int accountNumber) {
         double withdrawAmount = -1;
         while(withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
             withdrawAmount = keyboardInput.nextInt();
         }
-        userAccount.withdraw(withdrawAmount);
+        accounts.get(accountNumber-1).withdraw(withdrawAmount);
     }
 
 
