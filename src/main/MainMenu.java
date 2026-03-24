@@ -88,6 +88,14 @@ public class MainMenu {
         accounts.add(newAccount);
     }
 
+    public ArrayList<BankAccount> getAccounts() {
+        return accounts;
+    }
+
+    public int getNumberOfAccounts() {
+        return accounts.size();
+    }
+
     public void performDeposit(int accountNumber) {
         double depositAmount = -1;
         while(depositAmount < 0) {
