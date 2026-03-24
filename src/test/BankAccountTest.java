@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 public class BankAccountTest {
 
-// I am basically using the code here to test the custom checking their total
 
     @Test
     public void testDeposit() {
