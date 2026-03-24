@@ -88,6 +88,20 @@ public class MainMenu {
         accounts.add(newAccount);
     }
 
+    public void closeAccount(int accountIndex) {
+           
+        if(accountIndex >= 0 && accountIndex < accounts.size()) {
+
+            accounts.remove(accountIndex);
+
+        } else {
+
+            throw new IllegalArgumentException();
+
+        }
+    }
+
+
     public ArrayList<BankAccount> getAccounts() {
         return accounts;
     }
