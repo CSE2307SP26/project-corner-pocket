@@ -82,6 +82,28 @@ public class BankAccountTest {
     }
 
 
+    @Test
+    public void testCloseAccountSize(){
+            MainMenu mainMenu = new MainMenu();
+            mainMenu.createAccount();
+            mainMenu.closeAccount(0);
+            assertEquals(1, mainMenu.getAccounts().size());
+    }
+
+    @Test
+    public void testCloseInvalidAccount(){
+            MainMenu mainMenu = new MainMenu();
+            mainMenu.createAccount();
+            try {
+                mainMenu.closeAccount(1);
+                fail();
+            } catch (IndexOutOfBoundsException e) {
+                //do nothing, test passes
+            }
+    }
+
+
+
 
     @Test
     public void testTransferMoney() {
