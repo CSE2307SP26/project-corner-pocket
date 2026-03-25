@@ -92,9 +92,8 @@ public class BankAccountTest {
     @Test
     public void testCloseInvalidAccount(){
             MainMenu mainMenu = new MainMenu();
-            mainMenu.createAccount();
             try {
-                mainMenu.closeAccount(1);
+                mainMenu.closeAccount(2);
                 fail();
             } catch (IndexOutOfBoundsException e) {
                 //do nothing, test passes

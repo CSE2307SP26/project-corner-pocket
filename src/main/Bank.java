@@ -23,7 +23,7 @@ public class Bank {
             accounts.remove(accountIndex);
         } 
         else {
-            throw new IllegalArgumentException();
+            throw new IndexOutOfBoundsException();
         }
     }
     
