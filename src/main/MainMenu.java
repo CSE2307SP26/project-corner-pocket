@@ -81,6 +81,20 @@ public class MainMenu {
                 transferMoney(fromAccount, toAccount);
                 break;
             case 8:
+                 System.out.print("How much would you like to collect in fees: ");
+                 double feeAmount = keyboardInput.nextDouble();
+                 System.out.print("From which account: ");
+                 accountNumber = keyboardInput.nextInt();
+                 collectFees(accountNumber, feeAmount);
+                 break;
+            case 9:
+                System.out.print("What interest rate would you like to pay: ");
+                double interestRate = keyboardInput.nextDouble();
+                System.out.print("To which account: ");
+                accountNumber = keyboardInput.nextInt();
+                payInterest(accountNumber, interestRate);
+                break;
+            case 10:
                 System.exit(0);
         }
     }
@@ -139,6 +153,14 @@ public class MainMenu {
             transferAmount = keyboardInput.nextInt();
         }
         bank.transferMoney(fromAccount, toAccount, transferAmount);
+    }
+
+    public void collectFees(int accountNumber, double amount) {
+        bank.collectFees(accountNumber, amount);
+    }
+
+    public void payInterest(int accountNumber, double interestRate) {
+        bank.payInterest(accountNumber, interestRate);
     }
 
     public void run() {
