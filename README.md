@@ -21,6 +21,14 @@
 
 ## What user stories do you intend to complete next iteration?
 
+  We intend on implementing the Bank to have its own balance that the bank administrator will use to collectFees and payInterest with.
+
+  We intend on having a password that can be set and would be required for running administrative tasks.
+
+  We intend on removing redundant methods that overlap with the bank and bankaccount classes.
+  
 ## Is there anything that you implemented but doesn't currently work?
+
+  Everything should work
 
 ## What commands are needed to compile and run your code from the command line?
