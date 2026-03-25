@@ -10,13 +10,11 @@ public class MainMenu {
 	private static final int MAX_SELECTION = 6;
 
     private Scanner keyboardInput;
-    private ArrayList<BankAccount> accounts;
+    private Bank bank;
 
     public MainMenu() {
         //this.userAccount = new BankAccount();
-        this.accounts = new ArrayList<BankAccount>();
-        BankAccount userAccount = new BankAccount();
-        accounts.add(userAccount);
+        this.bank = new Bank();
 
         this.keyboardInput = new Scanner(System.in);
     }
@@ -84,8 +82,7 @@ public class MainMenu {
     }
 
     public void createAccount() {
-        BankAccount newAccount = new BankAccount();
-        accounts.add(newAccount);
+        bank.createAccount();
     }
 
     public void closeAccount(int accountIndex) {
@@ -103,29 +100,29 @@ public class MainMenu {
 
 
     public ArrayList<BankAccount> getAccounts() {
-        return accounts;
+        return bank.getAccounts();
     }
 
     public int getNumberOfAccounts() {
-        return accounts.size();
+        return bank.getNumberOfAccounts();
     }
 
     public void performDeposit(int accountNumber) {
         double depositAmount = -1;
-        while(depositAmount < 0) {
+        while (depositAmount < 0) {
             System.out.print("How much would you like to deposit: ");
             depositAmount = keyboardInput.nextInt();
         }
-        accounts.get(accountNumber-1).deposit(depositAmount);
+        bank.performDeposit(accountNumber, depositAmount);
     }
 
-    public void displayBalance(int accountNumber) {
-        System.out.println(accounts.get(accountNumber-1).getBalance());
+    public double displayBalance(int accountNumber) {
+        return bank.displayBalance(accountNumber);
     }
 
 
     public void displayTransactionHistory(int accountNumber) {
-        for (String line : accounts.get(accountNumber - 1).transactionHistory) {
+        for (String line : bank.getAccounts().get(accountNumber-1).transactionHistory) {
             System.out.println(line);
         }
     }
@@ -137,7 +134,7 @@ public class MainMenu {
             System.out.print("How much would you like to withdraw: ");
             withdrawAmount = keyboardInput.nextInt();
         }
-        accounts.get(accountNumber - 1).withdraw(withdrawAmount);
+        bank.performWithdrawal(accountNumber, withdrawAmount);
     }
     
     public void transferMoney(int fromAccount, int toAccount) {
@@ -146,8 +143,7 @@ public class MainMenu {
             System.out.print("How much would you like to transfer: ");
             transferAmount = keyboardInput.nextInt();
         }
-        accounts.get(fromAccount - 1).withdraw(transferAmount);
-        accounts.get(toAccount - 1).deposit(transferAmount);
+        bank.transferMoney(fromAccount, toAccount, transferAmount);
     }
 
     public void run() {
