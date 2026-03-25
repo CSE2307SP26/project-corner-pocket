@@ -3,7 +3,6 @@ package test;
 import main.BankAccount;
 import main.MainMenu;
 import main.Bank;
-import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
