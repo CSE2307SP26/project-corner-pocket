@@ -85,7 +85,7 @@ public class BankAccountTest {
     public void testCloseAccountSize(){
             MainMenu mainMenu = new MainMenu();
             mainMenu.createAccount();
-            mainMenu.closeAccount(0);
+            mainMenu.closeAccount(1);
             assertEquals(1, mainMenu.getAccounts().size());
     }
 
@@ -100,7 +100,6 @@ public class BankAccountTest {
                 //do nothing, test passes
             }
     }
-
 
 
 

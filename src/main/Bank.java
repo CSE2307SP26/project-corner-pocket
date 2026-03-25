@@ -19,7 +19,7 @@ public class Bank {
     }
 
     public void closeAccount(int accountIndex) {     
-        if(accountIndex >= 0 && accountIndex < getNumberOfAccounts()) {
+        if(accountIndex > 0 && accountIndex <= getNumberOfAccounts()) {
             accounts.remove(accountIndex);
         } 
         else {
