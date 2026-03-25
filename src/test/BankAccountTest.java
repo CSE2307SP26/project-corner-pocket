@@ -2,7 +2,7 @@ package test;
 
 import main.BankAccount;
 import main.MainMenu;
-import java.util.ArrayList;
+import main.Bank;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 public class BankAccountTest {
 
-    private static final int MAX_SELECTION = 6;
 
 // I am basically using the code here to test the custom checking their total
 
@@ -104,20 +103,20 @@ public class BankAccountTest {
 
 
 
-
     @Test
     public void testTransferMoney() {
-        MainMenu menu = new MainMenu();
+        Bank bank = new Bank();
 
-        menu.createAccount();
+        bank.createAccount();
 
-        menu.performDeposit(1);
+        bank.performDeposit(1, 5.00);
 
-        int selection = menu.getUserSelection(MAX_SELECTION);
+        bank.performDeposit(2, 1.00);
 
-        ArrayList<BankAccount> accounts = menu.getAccounts();
+        bank.transferMoney(1, 2, 3.00);
 
-        assertEquals(0, 0);
+
+        assertEquals(2.00, bank.getAccounts().get(1 - 1).getBalance(), 0.01);
 
     }
     //work in progress
