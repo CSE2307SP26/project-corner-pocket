@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 public class BankAccountTest {
 
-    private static final int MAX_SELECTION = 6;
 
 // I am basically using the code here to test the custom checking their total
 
