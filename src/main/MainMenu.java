@@ -59,24 +59,28 @@ public class MainMenu {
                 break;
             case 3:
                 accountNumber = getNumber();
-                peformWithdraw(accountNumber);
+                closeAccount(accountNumber);
                 break;
             case 4:
                 accountNumber = getNumber();
-                displayBalance(accountNumber);
+                peformWithdraw(accountNumber);
                 break;
             case 5:
                 accountNumber = getNumber();
-                displayTransactionHistory(accountNumber);
+                displayBalance(accountNumber);
                 break;
             case 6:
+                accountNumber = getNumber();
+                displayTransactionHistory(accountNumber);
+                break;
+            case 7:
                 System.out.print("From which account: ");
                 int fromAccount = keyboardInput.nextInt();
                 System.out.print("To which account: ");
                 int toAccount = keyboardInput.nextInt();
                 transferMoney(fromAccount, toAccount);
                 break;
-            case 7:
+            case 8:
                 System.exit(0);
         }
     }
@@ -86,16 +90,7 @@ public class MainMenu {
     }
 
     public void closeAccount(int accountIndex) {
-           
-        if(accountIndex >= 0 && accountIndex < accounts.size()) {
-
-            accounts.remove(accountIndex);
-
-        } else {
-
-            throw new IllegalArgumentException();
-
-        }
+        bank.closeAccount(accountIndex);
     }
 
 

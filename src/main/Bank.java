@@ -17,6 +17,15 @@ public class Bank {
         BankAccount newAccount = new BankAccount();
         accounts.add(newAccount);
     }
+
+    public void closeAccount(int accountIndex) {     
+        if(accountIndex >= 0 && accountIndex < getNumberOfAccounts()) {
+            accounts.remove(accountIndex);
+        } 
+        else {
+            throw new IllegalArgumentException();
+        }
+    }
     
     public ArrayList<BankAccount> getAccounts() {
         return accounts;
