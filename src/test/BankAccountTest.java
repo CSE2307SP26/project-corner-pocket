@@ -121,6 +121,23 @@ public class BankAccountTest {
     //work in progress
 
 
+    @Test
+    public void testCollectFees() {
+        MainMenu menu = new MainMenu();
+        menu.getAccounts().get(0).deposit(100);
+        menu.collectFees(1, 10);
+        assertEquals(90, menu.getAccounts().get(0).getBalance(), 0.01);
+    }
+
+    @Test
+    public void testPayInterest() {
+        MainMenu menu = new MainMenu();
+        menu.getAccounts().get(0).deposit(100);
+        menu.payInterest(1, 0.1);;
+        assertEquals(110, menu.getAccounts().get(0).getBalance(), 0.01);
+    }
+
+
 }
 
 
