@@ -18,9 +18,9 @@ public class Bank {
         accounts.add(newAccount);
     }
 
-    public void closeAccount(int accountIndex) {     
-        if(accountIndex >= 0 && accountIndex < getNumberOfAccounts()) {
-            accounts.remove(accountIndex);
+    public void closeAccount(int accountNumber) {     
+        if(accountNumber >= 1 && accountNumber <= getNumberOfAccounts()) {
+            accounts.remove(accountNumber - 1);
         } 
         else {
             throw new IllegalArgumentException();
@@ -52,4 +52,13 @@ public class Bank {
         return accounts.get(accountNumber - 1).getBalance();
     }
 
+    public void collectFees(int accountNumber,double amount) {
+       accounts.get(accountNumber - 1).withdraw(amount);
+    }
+
+    public void payInterest(int accountNumber,double interestRate) {
+
+        accounts.get(accountNumber - 1).deposit(accounts.get(accountNumber - 1).getBalance() * interestRate);
+        
+    }
 }
