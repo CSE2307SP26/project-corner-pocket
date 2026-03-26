@@ -19,8 +19,26 @@
 8. A bank adminstrator should be able to collect fees from existing accounts when necessary.
 9. A bank adminstrator should be able to add an interest payment to an existing account when necessary.
 
+
+
+## What user stories did we complete this iteration?
+
+  We completed all of the user stories with basic functionality, some will be added upon in our next iteration.
+
 ## What user stories do you intend to complete next iteration?
 
+  We intend on implementing the Bank to have its own balance that the bank administrator will use to collectFees and payInterest with.
+
+  We intend on having a password that can be set and would be required for running administrative tasks.
+
+  We intend on removing redundant methods that overlap with the bank and bankaccount classes.
+
+  We intend on accounting for any edge cases that were missed in our functions, such as in interestPayment.
+  
 ## Is there anything that you implemented but doesn't currently work?
+
+  interestPayment does not currently account for a negative interest rate and invalid account number.
+
+  collectFees does not currently account for an invalid account number.
 
 ## What commands are needed to compile and run your code from the command line?
