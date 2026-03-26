@@ -26,9 +26,13 @@
   We intend on having a password that can be set and would be required for running administrative tasks.
 
   We intend on removing redundant methods that overlap with the bank and bankaccount classes.
+
+  We intend on accounting for any edge cases that were missed in our functions, such as in interestPayment.
   
 ## Is there anything that you implemented but doesn't currently work?
 
-  Everything should work
+  interestPayment does not currently account for a negative interest rate and invalid account number.
+
+  collectFees does not currently account for an invalid account number.
 
 ## What commands are needed to compile and run your code from the command line?
