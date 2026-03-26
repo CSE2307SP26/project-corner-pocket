@@ -1,6 +1,7 @@
 #!/bin/bash
-javac src/main/BankAccount.java
-java src/main/BankAccount
-javac src/main/MainMenu.java
-java src/main/MainMenu
+cd src
+javac main/BankAccount.java
+javac main/Bank.java
+javac main/MainMenu.java
+java main/MainMenu
 #put commands here to compile and run your app from command line
