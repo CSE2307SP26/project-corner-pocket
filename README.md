@@ -19,6 +19,12 @@
 8. A bank adminstrator should be able to collect fees from existing accounts when necessary.
 9. A bank adminstrator should be able to add an interest payment to an existing account when necessary.
 
+
+
+## What user stories did we complete this iteration?
+
+  We completed all of the user stories with basic functionality, some will be added upon in our next iteration.
+
 ## What user stories do you intend to complete next iteration?
 
   We intend on implementing the Bank to have its own balance that the bank administrator will use to collectFees and payInterest with.
