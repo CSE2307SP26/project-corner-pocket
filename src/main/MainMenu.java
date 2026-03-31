@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 7;
-	private static final int MAX_SELECTION = 6;
+    private static final int EXIT_SELECTION = 10;
+	private static final int MAX_SELECTION = 10;
 
     private Scanner keyboardInput;
     private Bank bank;
@@ -24,11 +24,14 @@ public class MainMenu {
         
         System.out.println("1. Make a deposit");
         System.out.println("2. Create a new account");
-        System.out.println("3. Withdraw from account");
-        System.out.println("4. Check Balance");
-        System.out.println("5. Check transaction history");
-        System.out.println("6. Transfer money");
-        System.out.println("7. Exit the app");
+        System.out.println("3. Close an account");
+        System.out.println("4. Withdraw from account");
+        System.out.println("5. Check Balance");
+        System.out.println("6. Check transaction history");
+        System.out.println("7. Transfer money");
+        System.out.println("8. Collect fees");
+        System.out.println("9. Pay interest");
+        System.out.println("10. Exit the app");
 
     }
 

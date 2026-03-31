@@ -49,6 +49,7 @@ public class Bank {
     }
 
     public double displayBalance(int accountNumber) {
+        System.out.println("Your balance is: " + accounts.get(accountNumber - 1).getBalance());
         return accounts.get(accountNumber - 1).getBalance();
     }
 
