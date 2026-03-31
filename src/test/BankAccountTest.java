@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class BankAccountTest {
 
 
-// I am basically using the code here to test the custom checking their total
+
 
     @Test
     public void testDeposit() {
@@ -72,6 +72,21 @@ public class BankAccountTest {
     }
 
     @Test
+    public void testPasswordSet() {
+        BankAccount testAccount = new BankAccount();
+        testAccount.setPassword("password123");
+        assertEquals("password123", testAccount.getPassword());
+    }
+
+    @Test
+    public void testPasswordReset() {
+        BankAccount testAccount = new BankAccount();
+        testAccount.setPassword("password123");
+        testAccount.resetPassword();
+        assertEquals(null, testAccount.getPassword());
+    }
+
+    @Test
     public void testCreateAccount() {
         MainMenu menu = new MainMenu();
 
@@ -97,8 +112,7 @@ public class BankAccountTest {
         assertEquals(2.00, bank.getAccounts().get(1 - 1).getBalance(), 0.01);
 
     }
-    //work in progress
-
+    
 
     @Test
     public void testCollectFees() {
@@ -115,6 +129,8 @@ public class BankAccountTest {
         menu.payInterest(1, 0.1);;
         assertEquals(110, menu.getAccounts().get(0).getBalance(), 0.01);
     }
+
+
 
 
 }

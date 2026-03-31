@@ -10,7 +10,6 @@ public class Bank {
         this.accounts = new ArrayList<BankAccount>();
         BankAccount userAccount = new BankAccount();
         accounts.add(userAccount);
-
     }
     
     public void createAccount() {
@@ -61,5 +60,17 @@ public class Bank {
 
         accounts.get(accountNumber - 1).deposit(accounts.get(accountNumber - 1).getBalance() * interestRate);
         
+    }
+
+    public void setPassword(int accountNumber, String Password) {
+        accounts.get(accountNumber - 1).setPassword(Password);
+    }
+
+    public String getPassword(int accountNumber) {
+        return accounts.get(accountNumber - 1).getPassword();
+    }
+
+    public void performPasswordReset(int accountNumber) {
+        accounts.get(accountNumber - 1).resetPassword();
     }
 }

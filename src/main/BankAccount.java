@@ -7,10 +7,13 @@ public class BankAccount {
 
     private double balance;
     public List<String> transactionHistory;
+    private String password;
+    
 
     public BankAccount() {
         this.balance = 0;
         this.transactionHistory = new ArrayList<>();
+        this.password = null;
     }
 
     public void deposit(double amount) {
@@ -34,8 +37,21 @@ public class BankAccount {
         }
     }
 
-
     public double getBalance() {
         return this.balance;
+    }
+
+    //Sets the passwords based on a passed in string
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    //Resets the password to null
+    public void resetPassword() {
+        this.password = null;
+    }
+
+    public String getPassword() {
+        return this.password;
     }
 }
