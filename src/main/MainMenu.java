@@ -11,10 +11,12 @@ public class MainMenu {
 
     private Scanner keyboardInput;
     private Bank bank;
+    private BankAccount currentAccount;
 
     public MainMenu() {
         //this.userAccount = new BankAccount();
         this.bank = new Bank();
+        this.currentAccount = bank.getAccounts().get(1);
 
         this.keyboardInput = new Scanner(System.in);
     }
@@ -61,7 +63,7 @@ public class MainMenu {
             case 1:
                 accountNumber = getNumber();
                 if (checkPassword(accountNumber)) {
-                    performDeposit(accountNumber);
+                    performDeposit(currentAccount,accountNumber);
                 }
                 break;
             case 2:
@@ -173,7 +175,7 @@ public class MainMenu {
 
 
     public void displayTransactionHistory(int accountNumber) {
-        for (String line : bank.getAccounts().get(accountNumber-1).transactionHistory) {
+        for (String line : bank.getAccounts().get(accountNumber-1).getTransactionHistory()) {
             System.out.println(line);
         }
     }
