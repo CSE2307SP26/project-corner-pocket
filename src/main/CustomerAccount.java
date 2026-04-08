@@ -62,15 +62,7 @@ public class CustomerAccount extends BankAccount {
         this.deposit(transferAmount);
     }
 
-    public void payLoan(BankAccount toAccount, double amount) {
-        if (toAccount instanceof AdministratorAccount) {
-
-            this.transferMoney(toAccount, amount);
-        }
-        else {
-            throw new IllegalArgumentException();
-        }
-    }
+    
 
     
 }

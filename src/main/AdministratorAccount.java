@@ -23,8 +23,7 @@ public class AdministratorAccount extends BankAccount {
 
     public void transferMoney(BankAccount toAccount, double transferAmount) {
 
-        if(toAccount instanceof CustomerAccount){
-
+        if (toAccount instanceof CustomerAccount) {
            bankVault = bankVault - transferAmount;
 
            toAccount.receiveTransfer(transferAmount);
