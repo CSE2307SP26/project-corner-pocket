@@ -11,9 +11,10 @@ public class Bank {
 
     public Bank(double bankVaultBalance) {
 
-        accounts.put("admin1", new AdministratorAccount("admin1", "admin123", this));
-        accounts.put("customer1" , new CustomerAccount("customer1"));
+       
         this.bankVaultBalance = bankVaultBalance;
+        accounts.put("admin1", new AdministratorAccount("admin1", "admin123", this.bankVaultBalance));
+        accounts.put("customer1" , new CustomerAccount("customer1"));
     
     }
 
@@ -30,12 +31,17 @@ public class Bank {
     }
     
     public void createAccount(Boolean isAdmin, String accountName, String password) {
-        if(isAdmin) {
+        if(!accounts.containsKey(accountName)){
+            if(isAdmin) {
 
-            accounts.put(accountName, new AdministratorAccount(accountName, password, this));
+                accounts.put(accountName, new AdministratorAccount(accountName, password, this.bankVaultBalance));
             
-        } else {
-           accounts.put(accountName, new CustomerAccount(accountName));
+            } else {
+             accounts.put(accountName, new CustomerAccount(accountName));
+            }
+        }
+        else{
+            throw new IllegalArgumentException();
         }
     }
 
