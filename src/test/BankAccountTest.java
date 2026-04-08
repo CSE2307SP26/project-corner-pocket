@@ -14,9 +14,6 @@ import org.junit.jupiter.api.Test;
 
 public class BankAccountTest {
 
-
-
-
     @Test
     public void testDeposit() {
         CustomerAccount testAccount = new CustomerAccount("testAccount");

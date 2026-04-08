@@ -77,7 +77,7 @@ public class MainMenu {
                 break;
             case 6:
                 if (checkPassword()) {
-                    //displayTransactionHistory(accountNumber);
+                    displayTransactionHistory();
                 }
                 break;
             case 7:
@@ -178,7 +178,7 @@ public class MainMenu {
     }
 
 
-    public void displayTransactionHistory(int accountNumber) {
+    public void displayTransactionHistory() {
         for (String line : bank.getAccounts().get(accountNumber-1).getTransactionHistory()) {
             System.out.println(line);
         }
