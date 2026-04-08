@@ -1,6 +1,8 @@
 #!/bin/bash
 cd src
 javac main/BankAccount.java
+javac main/CustomerAccount.java
+javac main/AdministratorAccount.java
 javac main/Bank.java
 javac main/MainMenu.java
 java main/MainMenu

@@ -13,8 +13,7 @@ public class Bank {
 
        
         this.bankVaultBalance = bankVaultBalance;
-        accounts.put("admin1", new AdministratorAccount("admin1", "admin123", this.bankVaultBalance));
-        accounts.put("customer1" , new CustomerAccount("customer1"));
+        accounts.put("root", new AdministratorAccount("root", "toor", this.bankVaultBalance));
     
     }
 
@@ -87,14 +86,10 @@ public class Bank {
     }
 
     public double displayBalance(String username) {
-          BankAccount account = accounts.get(username);
-        if(account instanceof CustomerAccount){
-            CustomerAccount customerAccount = (CustomerAccount) accounts.get(username);
-            return customerAccount.getBalance();
-        } else {
-            System.out.println("Administrators do not have balances."); 
-            return 0;
-        }
+
+        CustomerAccount customerAccount = (CustomerAccount) accounts.get(username);
+        return customerAccount.getBalance();
+       
     }
 
     public void collectFees(String adminUsername, String customerUsername, double amount) {
@@ -111,7 +106,7 @@ public class Bank {
         }
     }
 
-    public void payInterest(String adminUsername, String customerUsername, double interestRate) {
+    public void payInterest(String adminUsername, String customerUsername, int interestRate) {
         BankAccount account = accounts.get(adminUsername);
         BankAccount toAccount = accounts.get(customerUsername);
         

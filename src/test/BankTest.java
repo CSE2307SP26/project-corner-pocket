@@ -20,7 +20,7 @@ public class BankTest {
             bank.createAccount(false, "testAccount2", null);
             bank.closeAccount("testAccount2");
 
-            assertEquals(3, bank.getAccounts().size());
+            assertEquals(2, bank.getAccounts().size());
 
     }
 
@@ -43,7 +43,7 @@ public class BankTest {
 
         bank.createAccount(false, "testAccount", "password123");
 
-        assertEquals(3, bank.getAccounts().size());
+        assertEquals(2, bank.getAccounts().size());
     }
 
     @Test
@@ -88,6 +88,17 @@ public class BankTest {
         bank.createAccount(true, "testAccount", "password123");
 
         assertEquals(true, bank.getAccounts().get("testAccount") instanceof AdministratorAccount);
+
+
+    }
+
+    @Test
+    public void testTwoOppositeTransfers(){
+
+        Bank bank = new Bank(20.00);
+        bank.createAccount(true, "adminAccount", "password123");
+        bank.createAccount(false, "customerAccount")
+
 
 
     }
