@@ -13,7 +13,7 @@ public class BankTest {
     
     @Test
     public void testCloseAccountSize(){
-            Bank bank = new Bank();
+            Bank bank = new Bank(20.00);
             bank.createAccount(false, "testAccount", null);
             bank.createAccount(false, "testAccount2", null);
             bank.closeAccount("testAccount2");
@@ -25,7 +25,7 @@ public class BankTest {
 
     @Test
     public void testCloseInvalidAccount(){
-            Bank bank = new Bank();
+            Bank bank = new Bank(20.00);
             bank.createAccount(false, "testAccount", null);
             try {
                 bank.closeAccount("testAccount2");

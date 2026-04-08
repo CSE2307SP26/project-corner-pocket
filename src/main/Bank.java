@@ -6,19 +6,33 @@ import java.util.HashMap;
 public class Bank {
 
     private HashMap<String, BankAccount> accounts = new HashMap<String, BankAccount>();
+    private double bankVaultBalance;
     
 
-    public Bank() {
+    public Bank(double bankVaultBalance) {
 
-        accounts.put("admin1", new AdministratorAccount("admin1", "admin123"));
+        accounts.put("admin1", new AdministratorAccount("admin1", "admin123", this));
         accounts.put("customer1" , new CustomerAccount("customer1"));
+        this.bankVaultBalance = bankVaultBalance;
     
+    }
+
+    public double getBankVaultBalance(){
+
+        return this.bankVaultBalance;
+
+    }
+    
+    public void setBankVaultBalance(double amount){
+
+        this.bankVaultBalance = amount;
+
     }
     
     public void createAccount(Boolean isAdmin, String accountName, String password) {
         if(isAdmin) {
 
-            accounts.put(accountName, new AdministratorAccount(accountName, password));
+            accounts.put(accountName, new AdministratorAccount(accountName, password, this));
             
         } else {
            accounts.put(accountName, new CustomerAccount(accountName));

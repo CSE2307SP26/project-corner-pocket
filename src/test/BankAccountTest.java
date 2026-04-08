@@ -86,7 +86,7 @@ public class BankAccountTest {
 
     @Test
     public void testCreateAccount() {
-        Bank bank = new Bank();
+        Bank bank = new Bank(20.00);
 
         bank.createAccount(false, "testAccount", "password123");
 
@@ -95,7 +95,7 @@ public class BankAccountTest {
 
     @Test
     public void testCreateCustomerAccount(){
-        Bank bank = new Bank();
+        Bank bank = new Bank(20.00);
 
         bank.createAccount(false, "testAccount", "password123");
 
@@ -105,7 +105,7 @@ public class BankAccountTest {
     @Test
     public void testCreateCustomerAccountWithoutPassword(){
         
-        Bank bank = new Bank();
+        Bank bank = new Bank(20.00);
 
         bank.createAccount(false, "testAccount", null);
 
@@ -116,7 +116,7 @@ public class BankAccountTest {
     @Test
     public void testCreateAdminAccount(){
 
-        Bank bank = new Bank();
+        Bank bank = new Bank(20.00);
 
         bank.createAccount(true, "testAccount", "password123");
 
@@ -143,20 +143,20 @@ public class BankAccountTest {
 
     @Test
     public void testTransferFromBankToCustomer(){
-        Bank bank = new Bank();
-        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123");
+        Bank bank = new Bank(20.00);
+        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", bank);
         CustomerAccount customerAccount = new CustomerAccount("customerAccount");
 
         adminAccount.transferMoney(customerAccount, 10.00);
 
         assertEquals(10.00, customerAccount.getBalance(), 0.05);
-        assertEquals(10.00, bank.getVault(), 0.05);
+        assertEquals(10.00, bank.getBankVaultBalance(), 0.05);
     }
 
     @Test
     public void testTransferFromCustomerToBank(){
-        Bank bank = new Bank();
-        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123");
+        Bank bank = new Bank(0.00);
+        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", bank);
         CustomerAccount customerAccount = new CustomerAccount("customerAccount");
 
         customerAccount.deposit(20.00);
@@ -164,41 +164,48 @@ public class BankAccountTest {
         customerAccount.transferMoney(adminAccount, 10.00);
 
         assertEquals(10.00, customerAccount.getBalance(), 0.05);
-        assertEquals(10.00, bank.getVault(), 0.05);
+        assertEquals(10.00, bank.getBankVaultBalance(), 0.05);
 
     }
 
     @Test
     public void testTransferFromBankToBank(){ //vault should remain the same in this case
 
-        Bank bank = new Bank();
-        AdministratorAccount adminAccount1 = new AdministratorAccount("adminAccount1", "password123");
-        AdministratorAccount adminAccount2 = new AdministratorAccount("adminAccount2", "password123");
+        Bank bank = new Bank(20.00);
+        AdministratorAccount adminAccount1 = new AdministratorAccount("adminAccount1", "password123", bank);
+        AdministratorAccount adminAccount2 = new AdministratorAccount("adminAccount2", "password123", bank);
 
         adminAccount1.transferMoney(adminAccount2, 10.00);
 
-        assertEquals(20.00, bank.getVault(), 0.05);
+        assertEquals(20.00, bank.getBankVaultBalance(), 0.05);
 
 
     }
     
 
-   /*  @Test
+   @Test
     public void testCollectFees() {
-        MainMenu menu = new MainMenu();
-        menu.getAccounts().get(0).deposit(100);
-        menu.collectFees(1, 10);
-        assertEquals(90, menu.getAccounts().get(0).getBalance(), 0.01);
+        Bank bank = new Bank(20.00);
+        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", bank);
+        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+        customerAccount.deposit(20.00);
+        adminAccount.collectFees(customerAccount, 10.00);
+        assertEquals(10.00, customerAccount.getBalance(), 0.05);
+        assertEquals(30.00, bank.getBankVaultBalance(), 0.05);
+        
     }
 
-    @Test
+   @Test
     public void testPayInterest() {
-        MainMenu menu = new MainMenu();
-        menu.getAccounts().get(0).deposit(100);
-        menu.payInterest(1, 0.1);;
-        assertEquals(110, menu.getAccounts().get(0).getBalance(), 0.01);
+        Bank bank = new Bank(20.00);
+        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", bank);
+        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+        customerAccount.deposit(100.00);
+        adminAccount.payInterest(customerAccount, 0.10);
+        assertEquals(110.00, customerAccount.getBalance(), 0.05);
+        assertEquals(10.00, bank.getBankVaultBalance(), 0.05); 
     }
-        */
+    
 
 
 
