@@ -3,30 +3,39 @@ package test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import main.BankAccount;
-import main.MainMenu;
 import main.Bank;
+
+import org.junit.jupiter.api.Test;
+
+import junit.framework.AssertionFailedError;
 
 public class BankTest {
     
     @Test
     public void testCloseAccountSize(){
-            MainMenu mainMenu = new MainMenu();
-            mainMenu.createAccount();
-            mainMenu.closeAccount(1);
-            assertEquals(1, mainMenu.getAccounts().size());
+            Bank bank = new Bank();
+            bank.createAccount(false, "testAccount", null);
+            bank.createAccount(false, "testAccount2", null);
+            bank.closeAccount("testAccount2");
+
+            assertEquals(3, bank.getAccounts().size());
+
+
     }
 
     @Test
     public void testCloseInvalidAccount(){
-            MainMenu mainMenu = new MainMenu();
+            Bank bank = new Bank();
+            bank.createAccount(false, "testAccount", null);
             try {
-                mainMenu.closeAccount(2);
+                bank.closeAccount("testAccount2");
                 fail();
-            } catch (IndexOutOfBoundsException e) {
+            } 
+            catch (IllegalArgumentException e) {
                 //do nothing, test passes
             }
     }
+        
 
 
     

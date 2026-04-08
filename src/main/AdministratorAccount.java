@@ -1,5 +1,4 @@
 package main;
-import java.util.ArrayList;
 
 public class AdministratorAccount extends BankAccount {
 
@@ -7,9 +6,9 @@ public class AdministratorAccount extends BankAccount {
         super(accountName, password); 
     }
 
-    public void collectFees(CustomerAccount toAccount,double amount) {
+    public void collectFees(BankAccount toAccount,double amount) {
 
-       toAccount.transferMoney(toAccount, amount);
+       toAccount.transferMoney(toAccount, amount);      
 
     }
 

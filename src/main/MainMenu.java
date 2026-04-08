@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.HashMap;
 
 
 public class MainMenu {
@@ -11,19 +12,18 @@ public class MainMenu {
 
     private Scanner keyboardInput;
     private Bank bank;
-    private BankAccount currentAccount;
+    private String currentAccount;
 
     public MainMenu() {
         //this.userAccount = new BankAccount();
         this.bank = new Bank();
-        this.currentAccount = bank.getAccounts().get(1);
 
         this.keyboardInput = new Scanner(System.in);
     }
 
     public void displayOptions() {
+
         System.out.println("Welcome to the 237 Bank App!");
-        
         System.out.println("1. Make a deposit");
         System.out.println("2. Create a new account");
         System.out.println("3. Close Account");
@@ -35,7 +35,8 @@ public class MainMenu {
         System.out.println("9. Pay interest");
         System.out.println("10. Set password");
         System.out.println("11. Reset password");
-        System.out.println("12. Exit the app");
+        System.out.println("12. Switch Account");
+        System.out.println("13. Exit the app");
 
     }
 
@@ -47,130 +48,133 @@ public class MainMenu {
         }
         return selection;
     }
-    
-    public int getNumber() {
-        for (int i = 0; i < bank.getNumberOfAccounts(); i++) {
-            System.out.println("Account " + (i + 1));
-        }
-        System.out.print("Please select an account:");
-        int selection = keyboardInput.nextInt();
-        return selection;
-    }
 
     public void processInput(int selection) {
         int accountNumber;
         switch (selection) {
             case 1:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    performDeposit(currentAccount,accountNumber);
+                if (checkPassword()) {
+                    performDeposit();
                 }
                 break;
             case 2:
                 createAccount();
                 break;
             case 3:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    closeAccount(accountNumber);
+                if (checkPassword()) {
+                    closeAccount();
                 }
                 break;
             case 4:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    peformWithdraw(accountNumber);
+                if (checkPassword()) {
+                    peformWithdraw();
                 }
                 break;
             case 5:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    displayBalance(accountNumber);
+                if (checkPassword()) {
+                    displayBalance();
                 }
                 break;
             case 6:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    displayTransactionHistory(accountNumber);
+                if (checkPassword()) {
+                    //displayTransactionHistory(accountNumber);
                 }
                 break;
             case 7:
-                System.out.print("From which account: ");
-                int fromAccount = keyboardInput.nextInt();
-                if (!checkPassword(fromAccount)) {
+                if (!checkPassword()) {
                     break;
                 }
                 System.out.print("To which account: ");
-                int toAccount = keyboardInput.nextInt();
-                if (!checkPassword(toAccount)) {
+                String toAccount = keyboardInput.next();
+                String tempAccount = currentAccount;
+                currentAccount = toAccount;
+                if (!checkPassword()) {
                     break;
                 }
-                transferMoney(fromAccount, toAccount);
+                currentAccount = tempAccount;
+                transferMoney(toAccount);
+
                 break;
             case 8:
                  System.out.print("How much would you like to collect in fees: ");
                  double feeAmount = keyboardInput.nextDouble();
                  System.out.print("From which account: ");
-                 accountNumber = keyboardInput.nextInt();
-                 if (!checkPassword(accountNumber)) {
+                 String customerAccount = keyboardInput.next();
+                 if (!checkPassword()) {
                      break;
                  }
-                 collectFees(accountNumber, feeAmount);
+                 bank.collectFees(currentAccount, customerAccount, feeAmount);
                  break;
             case 9:
-                System.out.print("What interest rate would you like to pay: ");
+                System.out.print("What interest would you like to pay to the customer: ");
                 double interestRate = keyboardInput.nextDouble();
                 System.out.print("To which account: ");
-                accountNumber = keyboardInput.nextInt();
-                if (!checkPassword(accountNumber)) {
+                customerAccount = keyboardInput.next();
+                if (!checkPassword()) {
                     break;
                 }
-                payInterest(accountNumber, interestRate);
+                payInterest(customerAccount, interestRate);
                 break;
             case 10:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    setPassword(accountNumber);
+                if (checkPassword()) {
+                    setPassword();
                 }
                 break;
             case 11:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    resetPassword(accountNumber);
+                if (checkPassword()) {
+                    resetPassword();
                 }
                 break;
             case 12:
+                this.currentAccount = switchAccount();
+                break;
+
+            case 13:
                 System.exit(0);
         }
     }
 
     public void createAccount() {
-        bank.createAccount();
+        System.out.print("Is this an administrator account? (true/false): ");
+        Boolean isAdmin = keyboardInput.nextBoolean();
+        System.out.print("What is the account's name?: ");
+        String username = keyboardInput.next();
+        String password = "";
+
+        if(isAdmin){
+            System.out.print("What is the password for the administrator account?: ");
+            password = keyboardInput.next();
+
+        }
+
+        bank.createAccount(isAdmin, username, password);
     }
 
-    public void closeAccount(int accountIndex) {
-        bank.closeAccount(accountIndex);
+    public void closeAccount() {
+        bank.closeAccount(currentAccount);
+        switchAccount();                     //user has to change accounts if they were to remove one
     }
 
 
-    public ArrayList<BankAccount> getAccounts() {
+    /*public ArrayList<BankAccount> getAccounts() {
         return bank.getAccounts();
     }
 
     public int getNumberOfAccounts() {
         return bank.getNumberOfAccounts();
-    }
+    }*/
 
-    public void performDeposit(int accountNumber) {
+    public void performDeposit() {
         double depositAmount = -1;
         while (depositAmount < 0) {
             System.out.print("How much would you like to deposit: ");
             depositAmount = keyboardInput.nextInt();
         }
-        bank.performDeposit(accountNumber, depositAmount);
+        bank.performDeposit(currentAccount, depositAmount);
     }
 
-    public double displayBalance(int accountNumber) {
-        return bank.displayBalance(accountNumber);
+    public double displayBalance() {
+        return bank.displayBalance(currentAccount);
     }
 
 
@@ -181,38 +185,38 @@ public class MainMenu {
     }
     
 
-    public void peformWithdraw(int accountNumber) {
+    public void peformWithdraw() {
         double withdrawAmount = -1;
         while (withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
             withdrawAmount = keyboardInput.nextInt();
         }
-        bank.performWithdrawal(accountNumber, withdrawAmount);
+        bank.performWithdrawal(currentAccount, withdrawAmount);
     }
     
-    public void transferMoney(int fromAccount, int toAccount) {
+    public void transferMoney(String toAccount) {
         double transferAmount = -1;
         while (transferAmount < 0) {
             System.out.print("How much would you like to transfer: ");
             transferAmount = keyboardInput.nextInt();
         }
-        bank.transferMoney(fromAccount, toAccount, transferAmount);
+        bank.transferMoney(currentAccount, toAccount, transferAmount);
     }
 
-    public void collectFees(int accountNumber, double amount) {
-        bank.collectFees(accountNumber, amount);
+    public void collectFees(String customerAccount, double amount) {
+        bank.collectFees(currentAccount, customerAccount, amount);
     }
 
-    public void payInterest(int accountNumber, double interestRate) {
-        bank.payInterest(accountNumber, interestRate);
+    public void payInterest(String customerAccount, double interestRate) {
+        bank.payInterest(currentAccount, customerAccount, interestRate);
     }
 
     /// Password Managment
-    public boolean checkPassword(int accountNumber) {
-        if (getPassword(accountNumber) != null){
+    public boolean checkPassword() {
+        if (getPassword() != null){
             System.out.print("Please enter the password: ");
             String password = keyboardInput.next();
-            if (!password.equals(getPassword(accountNumber))) {
+            if (!password.equals(getPassword())) {
                 System.out.println("Incorrect password, returning to main menu.");
                 return false;
             }
@@ -222,18 +226,31 @@ public class MainMenu {
     } 
     
     
-    public String getPassword(int accountNumber) {
-        return bank.getPassword(accountNumber);
+    public String getPassword() {
+        return bank.getPassword(currentAccount);
     }
 
-    public void setPassword(int accountNumber) {
+    public void setPassword() {
         System.out.print("Please enter a new password: ");
         String password = keyboardInput.next();
-        bank.setPassword(accountNumber, password);
+        bank.setPassword(currentAccount, password);
     }
 
-    public void resetPassword(int accountNumber) {
-        bank.performPasswordReset(accountNumber);
+    public void resetPassword() {
+        bank.performPasswordReset(currentAccount);
+    }
+
+    public String switchAccount() {
+
+        HashMap<String, BankAccount> accounts = bank.getAccounts();
+
+        for (String username : accounts.keySet()) {
+            System.out.println("user: " + accounts.get(username));
+        }
+
+        System.out.print("Please select an account:");
+        String selection = keyboardInput.next();
+        return selection;
     }
 
     public void run() {
