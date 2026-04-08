@@ -32,6 +32,10 @@ public class AdministratorAccount extends BankAccount {
     public void receiveTransfer(double transferAmount) {
 
         bank.setBankVaultBalance(bank.getBankVaultBalance() + transferAmount);
+
+    }
+
+    public void giveLoan(double toAccount, double amount, double interestRate){
         
     }
 
