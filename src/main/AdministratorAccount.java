@@ -2,25 +2,28 @@ package main;
 
 public class AdministratorAccount extends BankAccount {
 
-    public AdministratorAccount(String accountName,String password) { //administrator should always be created with a password
+    private Bank bank;
+
+    public AdministratorAccount(String accountName,String password, Bank bank) { //administrator should always be created with a password
         super(accountName, password); 
+        this.bank = bank;
     }
 
-    public void collectFees(BankAccount toAccount,double amount) {
+    public void collectFees(BankAccount fromAccount,double amount) {
 
-       toAccount.transferMoney(toAccount, amount);      
+       fromAccount.transferMoney(this, amount);      
 
     }
 
     public void payInterest(CustomerAccount toAccount ,double interestRate) {
 
-        toAccount.transferMoney(toAccount, toAccount.getBalance() * interestRate);
+        this.transferMoney(toAccount, toAccount.getBalance() * interestRate);
         
     }
 
     public void transferMoney(BankAccount toAccount, double transferAmount) {
 
-        //bank vault will transfer money to the account, will implement in vault branch.
+        bank.setBankVaultBalance(bank.getBankVaultBalance() - transferAmount);
 
         toAccount.receiveTransfer(transferAmount);
 
@@ -28,7 +31,7 @@ public class AdministratorAccount extends BankAccount {
 
     public void receiveTransfer(double transferAmount) {
 
-        //Amount is given to the bank vault, will implement in vault branch.
+        bank.setBankVaultBalance(bank.getBankVaultBalance() + transferAmount);
         
     }
 
