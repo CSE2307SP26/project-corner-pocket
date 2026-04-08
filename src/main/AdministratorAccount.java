@@ -15,9 +15,9 @@ public class AdministratorAccount extends BankAccount {
 
     }
 
-    public void payInterest(CustomerAccount toAccount , double interestRate) {
+    public void payInterest(CustomerAccount toAccount , int interestRate) {
 
-        this.transferMoney(toAccount, toAccount.getBalance() * interestRate);
+        this.transferMoney(toAccount, toAccount.getBalance() * interestRate * 0.01);
         
     }
 

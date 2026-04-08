@@ -15,6 +15,12 @@ public class CustomerAccount extends BankAccount {
         this.loanAmount = 0;
         
     }
+    public CustomerAccount(String accountName, String password){
+        super(accountName, password);
+        this.balance = 0;
+        this.transactionHistory = new ArrayList<>();
+        this.loanAmount = 0;
+    }
 
      public void deposit(double amount) {    
         if(amount > 0) {
