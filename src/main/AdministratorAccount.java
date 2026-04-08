@@ -53,7 +53,17 @@ public class AdministratorAccount extends BankAccount {
     }
 
     public void giveLoan(BankAccount toAccount, double amount, double interestRate) {
-        transferMoney(toAccount, amount - amount * interestRate * 0.01);
+        if (toAccount instanceof CustomerAccount) {
+
+            CustomerAccount customerToAccount= (CustomerAccount)toAccount;
+
+            customerToAccount.setLoanAmount(customerToAccount.getLoanAmount() + amount);
+            
+            transferMoney(customerToAccount, amount - amount * interestRate * 0.01);
+            customerToAccount.setLoanAmount(amount);
+            
+
+        }
     }
 
 
