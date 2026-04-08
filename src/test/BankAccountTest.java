@@ -172,7 +172,19 @@ public class BankAccountTest {
    }
     
    @Test
-   public void 
+   public void testPayLoan() {
+       
+       Bank bank = new Bank(20.00);
+       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
+       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+       customerAccount.deposit(100.00);
+       customerAccount.setLoanAmount(20.00);
+       customerAccount.payLoan(adminAccount, 20.00);
+       bank.setBankVaultBalance(adminAccount.updateBankVault());
+       assertEquals(80.00, customerAccount.getBalance(), 0.05);
+       assertEquals(0.00, customerAccount.getLoanAmount(), 0.05);
+       assertEquals(40.00, bank.getBankVaultBalance(), 0.05);
+   }
     
 
 
