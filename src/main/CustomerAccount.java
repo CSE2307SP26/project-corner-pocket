@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class CustomerAccount extends BankAccount {
 
     private double balance;
+    private double loanAmount;
     public ArrayList<String> transactionHistory;
 
     public CustomerAccount(String accountName) {
         super(accountName, null);
         this.balance = 0;
         this.transactionHistory = new ArrayList<>();
+        this.loanAmount = 0;
         
     }
 
@@ -39,6 +41,14 @@ public class CustomerAccount extends BankAccount {
         return this.balance;
     }
 
+    public double getLoanAmount() {
+        return this.loanAmount;
+    }
+
+    public void setLoanAmount(double loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+
     public ArrayList<String> getTransactionHistory() {
         return this.transactionHistory;
     }
@@ -50,6 +60,16 @@ public class CustomerAccount extends BankAccount {
 
     public void receiveTransfer(double transferAmount) {
         this.deposit(transferAmount);
+    }
+
+    public void payLoan(BankAccount toAccount, double amount) {
+        if (toAccount instanceof AdministratorAccount) {
+
+            this.transferMoney(toAccount, amount);
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
     }
 
     

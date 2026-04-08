@@ -53,8 +53,8 @@ public class AdministratorAccount extends BankAccount {
 
     }
 
-    public void giveLoan(double toAccount, double amount, double interestRate){
-        
+    public void giveLoan(BankAccount toAccount, double amount, double interestRate) {
+        transferMoney(toAccount, amount - amount * interestRate * 0.01);
     }
 
 
