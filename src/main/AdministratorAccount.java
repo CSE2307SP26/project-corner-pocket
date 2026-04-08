@@ -2,11 +2,11 @@ package main;
 
 public class AdministratorAccount extends BankAccount {
 
-    private Bank bank;
+    private double bankVault;
 
-    public AdministratorAccount(String accountName,String password, Bank bank) { //administrator should always be created with a password
+    public AdministratorAccount(String accountName,String password, double bankVault) { //administrator should always be created with a password
         super(accountName, password); 
-        this.bank = bank;
+        this.bankVault = bankVault;
     }
 
     public void collectFees(BankAccount fromAccount,double amount) {
@@ -15,7 +15,7 @@ public class AdministratorAccount extends BankAccount {
 
     }
 
-    public void payInterest(CustomerAccount toAccount ,double interestRate) {
+    public void payInterest(CustomerAccount toAccount , double interestRate) {
 
         this.transferMoney(toAccount, toAccount.getBalance() * interestRate);
         
@@ -23,15 +23,33 @@ public class AdministratorAccount extends BankAccount {
 
     public void transferMoney(BankAccount toAccount, double transferAmount) {
 
-        bank.setBankVaultBalance(bank.getBankVaultBalance() - transferAmount);
+        if(toAccount instanceof CustomerAccount){
 
-        toAccount.receiveTransfer(transferAmount);
+           bankVault = bankVault - transferAmount;
+
+           toAccount.receiveTransfer(transferAmount);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
 
     }
 
     public void receiveTransfer(double transferAmount) {
 
-        bank.setBankVaultBalance(bank.getBankVaultBalance() + transferAmount);
+        bankVault = bankVault + transferAmount;
+        
+    }
+
+    public double updateBankVault(){
+
+        return this.bankVault;
+
+    }
+
+    public void updateLocalBankVault(double bankVault){
+
+        this.bankVault = bankVault;
 
     }
 

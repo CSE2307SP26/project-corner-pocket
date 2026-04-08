@@ -7,36 +7,51 @@ import java.util.HashMap;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 12;
-	private static final int MAX_SELECTION = 12;
+    private static int EXIT_SELECTION = 11;
+	private static int MAX_SELECTION = 11;
 
     private Scanner keyboardInput;
     private Bank bank;
     private String currentAccount;
 
     public MainMenu() {
-        //this.userAccount = new BankAccount();
-        this.bank = new Bank();
-
+        this.bank = new Bank(10000.00);
         this.keyboardInput = new Scanner(System.in);
     }
 
     public void displayOptions() {
-
         System.out.println("Welcome to the 237 Bank App!");
-        System.out.println("1. Make a deposit");
-        System.out.println("2. Create a new account");
-        System.out.println("3. Close Account");
-        System.out.println("4. Make a withdrawal");
-        System.out.println("5. Check Balance");
-        System.out.println("6. Check transaction history");
-        System.out.println("7. Transfer money");
-        System.out.println("8. Collect fees");
-        System.out.println("9. Pay interest");
-        System.out.println("10. Set password");
-        System.out.println("11. Reset password");
-        System.out.println("12. Switch Account");
-        System.out.println("13. Exit the app");
+        
+        if(bank.getAccounts().get(currentAccount) instanceof CustomerAccount){
+
+          EXIT_SELECTION = 11;
+          MAX_SELECTION = 11;
+            
+          System.out.println("Current Customer: " + currentAccount);
+          System.out.println("1. Make a deposit");
+          System.out.println("2. Create a new account");
+          System.out.println("3. Close an account");
+          System.out.println("4. Make a withdrawal");
+          System.out.println("5. Check Balance");
+          System.out.println("6. Check transaction history");
+          System.out.println("7. Transfer money to another account");
+          System.out.println("8. Set password");
+          System.out.println("9. Reset password");
+          System.out.println("10. Switch Account");
+          System.out.println("11. Exit the app");
+        }
+
+        else{
+            EXIT_SELECTION = 6;
+            MAX_SELECTION = 6;
+            System.out.println("Current Administrator: " + currentAccount);
+            System.out.println("1. Collect fees");
+            System.out.println("2. Pay interest to a customer");
+            System.out.println("3. Set password");
+            System.out.println("4. Reset password");
+            System.out.println("5. Switch Account");
+            System.out.println("6. Exit the app");
+        }
 
     }
 
@@ -50,7 +65,8 @@ public class MainMenu {
     }
 
     public void processInput(int selection) {
-        int accountNumber;
+
+       if(bank.getAccounts().get(currentAccount) instanceof CustomerAccount){
         switch (selection) {
             case 1:
                 if (checkPassword()) {
@@ -95,6 +111,28 @@ public class MainMenu {
                 transferMoney(toAccount);
 
                 break;
+                
+                if (checkPassword()) {
+                    setPassword();
+                }
+                break;
+            case 8:
+                if (checkPassword()) {
+                    resetPassword();
+                }
+                break;
+            case 9:
+                this.currentAccount = switchAccount();
+                break;
+
+            case 10:
+                System.exit(0);
+            }
+
+           }
+        }
+        else{
+            switch(selection){
             case 8:
                  System.out.print("How much would you like to collect in fees: ");
                  double feeAmount = keyboardInput.nextDouble();
@@ -131,6 +169,7 @@ public class MainMenu {
 
             case 13:
                 System.exit(0);
+            }
         }
     }
 
@@ -155,14 +194,6 @@ public class MainMenu {
         switchAccount();                     //user has to change accounts if they were to remove one
     }
 
-
-    /*public ArrayList<BankAccount> getAccounts() {
-        return bank.getAccounts();
-    }
-
-    public int getNumberOfAccounts() {
-        return bank.getNumberOfAccounts();
-    }*/
 
     public void performDeposit() {
         double depositAmount = -1;
