@@ -23,8 +23,7 @@ public class AdministratorAccount extends BankAccount {
 
     public void transferMoney(BankAccount toAccount, double transferAmount) {
 
-        if(toAccount instanceof CustomerAccount){
-
+        if (toAccount instanceof CustomerAccount) {
            bankVault = bankVault - transferAmount;
 
            toAccount.receiveTransfer(transferAmount);
@@ -51,6 +50,20 @@ public class AdministratorAccount extends BankAccount {
 
         this.bankVault = bankVault;
 
+    }
+
+    public void giveLoan(BankAccount toAccount, double amount, double interestRate) {
+        if (toAccount instanceof CustomerAccount) {
+
+            CustomerAccount customerToAccount= (CustomerAccount)toAccount;
+
+            customerToAccount.setLoanAmount(customerToAccount.getLoanAmount() + amount);
+            
+            transferMoney(customerToAccount, amount - amount * interestRate * 0.01);
+            customerToAccount.setLoanAmount(amount);
+            
+
+        }
     }
 
 
