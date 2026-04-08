@@ -184,6 +184,18 @@ public class BankAccountTest {
        assertEquals(80.00, customerAccount.getBalance(), 0.05);
        assertEquals(0.00, customerAccount.getLoanAmount(), 0.05);
        assertEquals(40.00, bank.getBankVaultBalance(), 0.05);
+  @Test
+   public void testGiveLoan() {
+
+       Bank bank = new Bank(100.00);
+       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123",100.00);
+       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+       customerAccount.deposit(100.00);
+       adminAccount.giveLoan(customerAccount, 50.00, 8.00);
+       bank.setBankVaultBalance(adminAccount.updateBankVault());
+       assertEquals(146.00, customerAccount.getBalance(), 0.05);
+       assertEquals(54.00, bank.getBankVaultBalance(), 0.05);
+       assertEquals(50.00, customerAccount.getLoanAmount(), 0.05);
    }
     
 
