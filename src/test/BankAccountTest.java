@@ -200,7 +200,6 @@ public class BankAccountTest {
        assertEquals(50.00, customerAccount.getLoanAmount(), 0.05);
    }
 
-       
 
 
 
