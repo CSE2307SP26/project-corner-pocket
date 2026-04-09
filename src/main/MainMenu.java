@@ -92,7 +92,7 @@ public class MainMenu {
             
             case 2: 
                 switchAccount();
-
+                break; 
             case 3:
                 System.exit(0); 
 
@@ -424,7 +424,7 @@ public class MainMenu {
         
         if(accounts.size() > 0){
         for (String username : accounts.keySet()) {
-            System.out.println("user: " + accounts.get(username));
+            System.out.println("user: " + username);
         }
 
         System.out.print("Please select an account:");
