@@ -1,41 +1,39 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class BankAccount {
 
-    private double balance;
-    public List<String> transactionHistory;
+public abstract class BankAccount {
 
-    public BankAccount() {
-        this.balance = 0;
-        this.transactionHistory = new ArrayList<>();
-    }
+  
+    private final String accountName;
+    private String password;
+    
 
-    public void deposit(double amount) {
-        if(amount > 0) {
-            this.balance += amount;
-            this.transactionHistory.add("Deposited: $"+amount);
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void withdraw(double amount) {
-        if (amount > 0 && this.balance >= amount){
-            this.balance -= amount;
-            this.transactionHistory.add("Withdrew: $"+amount);
-        } else if (amount > 0 && this.balance < amount){
-            this.transactionHistory.add("Withdrew: $"+this.balance);
-            this.balance = 0;
-        } else {
-            throw new IllegalArgumentException();
-        }
+    public BankAccount(String accountName, String password) {
+        this.accountName = accountName;
+        setPassword(password);
     }
 
 
-    public double getBalance() {
-        return this.balance;
+    //Sets the passwords based on a passed in string
+    public void setPassword(String password) {
+        this.password = password;
     }
+
+    //Resets the password to null
+    public void resetPassword() {
+        this.password = null;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public String getAccountName() { //used for printing the account name in the main menu
+        return this.accountName;
+    }
+
+    public abstract void transferMoney(BankAccount toAccount, double transferAmount);
+
+    public abstract void receiveTransfer(double transferAmount);
 }
