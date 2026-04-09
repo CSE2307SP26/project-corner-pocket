@@ -9,7 +9,6 @@ import main.CustomerAccount;
 
 import org.junit.jupiter.api.Test;
 
-import junit.framework.AssertionFailedError;
 
 public class BankTest {
     
