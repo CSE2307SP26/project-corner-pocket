@@ -1,76 +1,158 @@
 package main;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class Bank {
 
-    private ArrayList<BankAccount> accounts;
+    private HashMap<String, BankAccount> accounts = new HashMap<String, BankAccount>();
+    private double bankVaultBalance;
+    
 
-    public Bank() {
-        this.accounts = new ArrayList<BankAccount>();
-        BankAccount userAccount = new BankAccount();
-        accounts.add(userAccount);
+    public Bank(double bankVaultBalance) {
+
+       
+        this.bankVaultBalance = bankVaultBalance;
+        accounts.put("root", new AdministratorAccount("root", "toor", this.bankVaultBalance));
+    
+    }
+
+    public double getBankVaultBalance(){
+
+        return this.bankVaultBalance;
+
     }
     
-    public void createAccount() {
-        BankAccount newAccount = new BankAccount();
-        accounts.add(newAccount);
+    public void setBankVaultBalance(double amount){
+
+        this.bankVaultBalance = amount;
+
+    }
+    
+    public void createAccount(Boolean isAdmin, String accountName, String password) {
+        if(!accounts.containsKey(accountName)){
+            if(isAdmin) {
+
+                accounts.put(accountName, new AdministratorAccount(accountName, password, this.bankVaultBalance));
+            
+            } else {
+             accounts.put(accountName, new CustomerAccount(accountName));
+            }
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void closeAccount(int accountNumber) {     
-        if(accountNumber >= 1 && accountNumber <= getNumberOfAccounts()) {
-            accounts.remove(accountNumber - 1);
+    public void closeAccount(String username) {
+      
+        if(accounts.remove(username) == null){
+            throw new IllegalArgumentException();
+        }
+
+    }
+    
+    public HashMap<String, BankAccount> getAccounts() {
+        return accounts;
+    }
+    
+
+    public void performDeposit(String username, double amount) {
+        BankAccount account = accounts.get(username);
+        if(account instanceof CustomerAccount){
+           CustomerAccount customerAccount = (CustomerAccount) accounts.get(username);
+           customerAccount.deposit(amount);
         } 
         else {
-            throw new IndexOutOfBoundsException();
+            System.out.println("Administrators cannot perform deposits."); 
+        }
+    }
+
+    public void performWithdrawal(String username, double amount){
+        BankAccount account = accounts.get(username);
+        if(account instanceof CustomerAccount){
+            CustomerAccount customerAccount = (CustomerAccount) accounts.get(username);
+            customerAccount.deposit(amount);
+        } else {
+            System.out.println("Administrators cannot perform withdrawals."); 
         }
     }
     
-    public ArrayList<BankAccount> getAccounts() {
-        return accounts;
+
+    public void transferMoney(String fromUsername, String toUsername, double transferAmount) {
+
+       accounts.get(fromUsername).transferMoney(accounts.get(toUsername), transferAmount);
+
     }
 
-    public int getNumberOfAccounts() {
-        return accounts.size();
+    public double displayBalance(String username) {
+
+        CustomerAccount customerAccount = (CustomerAccount) accounts.get(username);
+        return customerAccount.getBalance();
+       
     }
 
-    public void performDeposit(int accountNumber, double amount) {
-        accounts.get(accountNumber - 1).deposit(amount);
-    }
+    public void collectFees(String adminUsername, String customerUsername, double amount) {
+        BankAccount account = accounts.get(adminUsername);
+        BankAccount customerAccount = accounts.get(customerUsername);
 
-    public void performWithdrawal(int accountNumber, double amount){
-        accounts.get(accountNumber - 1).withdraw(amount);
-    }
+        if(account instanceof AdministratorAccount){
+            AdministratorAccount administratorAccount = (AdministratorAccount) account;
 
-    public void transferMoney(int fromAccount, int toAccount, double transferAmount) {
-        accounts.get(fromAccount - 1).withdraw(transferAmount);
-        accounts.get(toAccount - 1).deposit(transferAmount);
-    }
-
-    public double displayBalance(int accountNumber) {
-        System.out.println("Your balance is: " + accounts.get(accountNumber - 1).getBalance());
-        return accounts.get(accountNumber - 1).getBalance();
-    }
-
-    public void collectFees(int accountNumber,double amount) {
-       accounts.get(accountNumber - 1).withdraw(amount);
-    }
-
-    public void payInterest(int accountNumber,double interestRate) {
-
-        accounts.get(accountNumber - 1).deposit(accounts.get(accountNumber - 1).getBalance() * interestRate);
+            administratorAccount.collectFees(customerAccount, amount);
         
+        } else {
+            System.out.println("Only administrators can collect fees from a customer's account."); 
+        }
     }
 
-    public void setPassword(int accountNumber, String Password) {
-        accounts.get(accountNumber - 1).setPassword(Password);
+    public void payInterest(String adminUsername, String customerUsername, int interestRate) {
+        BankAccount account = accounts.get(adminUsername);
+        BankAccount toAccount = accounts.get(customerUsername);
+        
+        if(account instanceof AdministratorAccount){
+           AdministratorAccount administratorAccount = (AdministratorAccount) account;
+           if(toAccount instanceof CustomerAccount){
+             CustomerAccount customerAccount = (CustomerAccount) toAccount;
+             administratorAccount.payInterest(customerAccount, interestRate);
+           }
+           else{
+            System.out.print("Interest rates can only be paid to customer accounts");
+           }
+        } else {
+            System.out.println("Only administrators can pay interest to a customer's account"); 
+        }
     }
 
-    public String getPassword(int accountNumber) {
-        return accounts.get(accountNumber - 1).getPassword();
+    public void performPayLoan(String customerUsername, String adminUsername, double amount){
+        CustomerAccount customerAccount = (CustomerAccount) accounts.get(customerUsername);
+        BankAccount administratorAccount = accounts.get(adminUsername);
+        if(administratorAccount instanceof AdministratorAccount){
+           AdministratorAccount adminAccount = (AdministratorAccount) administratorAccount;
+           adminAccount.updateLocalBankVault(this.bankVaultBalance);
+           customerAccount.payLoan(accounts.get(adminUsername), amount);
+        }
+        else{
+            System.out.println("This is not an admin account!");
+        }
     }
 
-    public void performPasswordReset(int accountNumber) {
-        accounts.get(accountNumber - 1).resetPassword();
+    public void performGiveLoan(String adminUsername, String customerUsername, double amount, double interest){
+
     }
+
+    public String getPassword(String username) {
+        return accounts.get(username).getPassword();
+    }
+
+    public void setPassword(String username, String password) {
+        accounts.get(username).setPassword(password);
+
+    }
+
+    public void performPasswordReset(String username) {
+        accounts.get(username).resetPassword();
+    }
+
+    
 }

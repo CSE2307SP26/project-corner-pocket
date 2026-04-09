@@ -2,38 +2,74 @@ package main;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.HashMap;
 
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 12;
-	private static final int MAX_SELECTION = 12;
+    private static int EXIT_SELECTION = 11;
+	private static int MAX_SELECTION = 11;
 
     private Scanner keyboardInput;
     private Bank bank;
+    private String currentAccount = null;
 
     public MainMenu() {
-        //this.userAccount = new BankAccount();
-        this.bank = new Bank();
-
+        this.bank = new Bank(10000.00);
         this.keyboardInput = new Scanner(System.in);
     }
 
     public void displayOptions() {
         System.out.println("Welcome to the 237 Bank App!");
+
+        if(currentAccount == null){
+            EXIT_SELECTION = 3;
+            MAX_SELECTION = 3;
+
+            System.out.println("Currently not logged in, you have the following options: ");
+            System.out.println("1. Create a new account");
+            System.out.println("2. Switch to an existing Account");
+            System.out.println("3. Exit the app");
+
+
+
+
+        }
         
-        System.out.println("1. Make a deposit");
-        System.out.println("2. Create a new account");
-        System.out.println("3. Close Account");
-        System.out.println("4. Make a withdrawal");
-        System.out.println("5. Check Balance");
-        System.out.println("6. Check transaction history");
-        System.out.println("7. Transfer money");
-        System.out.println("8. Collect fees");
-        System.out.println("9. Pay interest");
-        System.out.println("10. Set password");
-        System.out.println("11. Reset password");
-        System.out.println("12. Exit the app");
+        else if(bank.getAccounts().get(currentAccount) instanceof CustomerAccount){
+
+          EXIT_SELECTION = 12;
+          MAX_SELECTION = 12;
+            
+          System.out.println("Current Customer: " + currentAccount);
+          System.out.println("1. Make a deposit");
+          System.out.println("2. Create a new account");
+          System.out.println("3. Close this account");
+          System.out.println("4. Make a withdrawal");
+          System.out.println("5. Check Balance");
+          System.out.println("6. Check transaction history");
+          System.out.println("7. Transfer money to another account");
+          System.out.println("8. Pay back part of loan");
+          System.out.println("9. Set password");
+          System.out.println("10. Reset password");
+          System.out.println("11. Switch to an existing account");
+          System.out.println("12. Exit the app");
+        }
+
+        else{
+            EXIT_SELECTION = 9;
+            MAX_SELECTION = 9;
+            System.out.println("Current Administrator: " + currentAccount);
+            System.out.println("1. Create a new account");
+            System.out.println("2. Close this account");
+            System.out.println("3. Collect fees");
+            System.out.println("4. Pay interest to a customer");
+            System.out.println("5. Issue loan to a customer");
+            System.out.println("6. Set password");
+            System.out.println("7. Reset password");
+            System.out.println("8. Switch to an existing account");
+            System.out.println("9. Exit the app");
+        }
 
     }
 
@@ -45,172 +81,320 @@ public class MainMenu {
         }
         return selection;
     }
-    
-    public int getNumber() {
-        for (int i = 0; i < bank.getNumberOfAccounts(); i++) {
-            System.out.println("Account " + (i + 1));
-        }
-        System.out.print("Please select an account:");
-        int selection = keyboardInput.nextInt();
-        return selection;
-    }
 
     public void processInput(int selection) {
-        int accountNumber;
+
+       if(currentAccount == null){
+        switch (selection){
+            case 1: 
+                createAccount();
+                break;
+            
+            case 2: 
+                switchAccount();
+
+            case 3:
+                System.exit(0); 
+
+        }
+       } 
+
+       else if(bank.getAccounts().get(currentAccount) instanceof CustomerAccount){
         switch (selection) {
             case 1:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    performDeposit(accountNumber);
+                if (checkPassword()) {
+                    performDeposit();
                 }
                 break;
             case 2:
                 createAccount();
                 break;
             case 3:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    closeAccount(accountNumber);
+                if (checkPassword()) {
+                    closeAccount();
                 }
                 break;
             case 4:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    peformWithdraw(accountNumber);
+                if (checkPassword()) {
+                    peformWithdraw();
                 }
                 break;
             case 5:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    displayBalance(accountNumber);
+                if (checkPassword()) {
+                    displayBalance();
                 }
                 break;
             case 6:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    displayTransactionHistory(accountNumber);
+                if (checkPassword()) {
+                    displayTransactionHistory();
                 }
                 break;
             case 7:
-                System.out.print("From which account: ");
-                int fromAccount = keyboardInput.nextInt();
-                if (!checkPassword(fromAccount)) {
+                if (!checkPassword()) {
                     break;
                 }
                 System.out.print("To which account: ");
-                int toAccount = keyboardInput.nextInt();
-                if (!checkPassword(toAccount)) {
+                String toAccount = keyboardInput.next();
+                String tempAccount = currentAccount;
+                currentAccount = toAccount;
+                if (!checkPassword()) {
                     break;
                 }
-                transferMoney(fromAccount, toAccount);
+                currentAccount = tempAccount;
+                transferMoney(toAccount);
+
                 break;
             case 8:
-                 System.out.print("How much would you like to collect in fees: ");
-                 double feeAmount = keyboardInput.nextDouble();
-                 System.out.print("From which account: ");
-                 accountNumber = keyboardInput.nextInt();
-                 if (!checkPassword(accountNumber)) {
-                     break;
-                 }
-                 collectFees(accountNumber, feeAmount);
-                 break;
-            case 9:
-                System.out.print("What interest rate would you like to pay: ");
-                double interestRate = keyboardInput.nextDouble();
-                System.out.print("To which account: ");
-                accountNumber = keyboardInput.nextInt();
-                if (!checkPassword(accountNumber)) {
+                if (!checkPassword()){
                     break;
                 }
-                payInterest(accountNumber, interestRate);
+                performPayLoan();
+
+
+            case 9:
+                
+                if (checkPassword()) {
+                    setPassword();
+                }
                 break;
             case 10:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    setPassword(accountNumber);
+                if (checkPassword()) {
+                    resetPassword();
                 }
                 break;
             case 11:
-                accountNumber = getNumber();
-                if (checkPassword(accountNumber)) {
-                    resetPassword(accountNumber);
-                }
+                switchAccount();
                 break;
+
             case 12:
                 System.exit(0);
+            }
+        }
+
+           
+        else{
+            switch(selection){
+            case 1:
+                createAccount();
+                break;
+
+            case 2:
+                if (checkPassword()) {
+                    closeAccount();
+                }
+                break;
+
+            case 3:
+                 System.out.print("How much would you like to collect in fees: ");
+                 double feeAmount = keyboardInput.nextDouble();
+                 System.out.print("From which account: ");
+                 String customerAccount = keyboardInput.next();
+                 if (!checkPassword()) {
+                     break;
+                 }
+                 bank.collectFees(currentAccount, customerAccount, feeAmount);
+                 break;
+
+            case 4:
+                System.out.print("What interest would you like to pay to the customer (percentage): ");
+                int interestRate = keyboardInput.nextInt();
+                System.out.print("To which account?: ");
+                customerAccount = keyboardInput.next();
+                if (!checkPassword()) {
+                    break;
+                }
+                payInterest(customerAccount, interestRate);
+                break;
+
+            case 5:
+                if (checkPassword()) {
+                    setPassword();
+                }
+                break;
+
+            case 6:
+                if (checkPassword()) {
+                    resetPassword();
+                }
+                break;
+
+            case 7:
+                switchAccount();
+                break;
+
+            case 8:
+                System.exit(0);
+            }
         }
     }
 
     public void createAccount() {
-        bank.createAccount();
+        System.out.print("Is this an administrator account? (true/false) ");
+        Boolean isAdmin = keyboardInput.nextBoolean();
+        System.out.print("What is the account's name?: ");
+        String username = keyboardInput.next();
+        String password = "";
+        Boolean wantsPassword;
+
+        if(isAdmin){
+            System.out.print("A password is required for the administrator account, what do you wish for it to be? ");
+            password = keyboardInput.next();
+
+        }
+        else{
+            System.out.print("Do you wish to have a password? (true/false) ");
+            wantsPassword = keyboardInput.nextBoolean();
+            if(wantsPassword){
+                System.out.print("What do you wish for your password to be? ");
+                password = keyboardInput.next();
+            }
+        }
+        try{
+            bank.createAccount(isAdmin, username, password);
+        }
+        catch(IllegalArgumentException e){
+            System.out.println("Username is already taken!");
+        }
     }
 
-    public void closeAccount(int accountIndex) {
-        bank.closeAccount(accountIndex);
+    public void closeAccount() {
+        try{
+            bank.closeAccount(currentAccount);
+            currentAccount = null;
+        }
+        catch(IllegalArgumentException e){
+            System.out.println("Username already doesn't exist");
+        }
     }
 
 
-    public ArrayList<BankAccount> getAccounts() {
-        return bank.getAccounts();
-    }
-
-    public int getNumberOfAccounts() {
-        return bank.getNumberOfAccounts();
-    }
-
-    public void performDeposit(int accountNumber) {
+    public void performDeposit() {
         double depositAmount = -1;
         while (depositAmount < 0) {
             System.out.print("How much would you like to deposit: ");
             depositAmount = keyboardInput.nextInt();
         }
-        bank.performDeposit(accountNumber, depositAmount);
-    }
-
-    public double displayBalance(int accountNumber) {
-        return bank.displayBalance(accountNumber);
-    }
-
-
-    public void displayTransactionHistory(int accountNumber) {
-        for (String line : bank.getAccounts().get(accountNumber-1).transactionHistory) {
-            System.out.println(line);
+        try{
+            bank.performDeposit(currentAccount, depositAmount);
         }
+        catch(IllegalArgumentException e){
+            System.out.println("Invalid deposit amount!");
+        }
+    }
+
+    public void displayBalance() {
+        System.out.println(bank.displayBalance(currentAccount));
+    }
+
+
+    public void displayTransactionHistory() {
+        CustomerAccount customerAccount = (CustomerAccount) bank.getAccounts().get(currentAccount);
+        for (String line : customerAccount.getTransactionHistory()) {
+             System.out.println(line);
+        }
+        
     }
     
 
-    public void peformWithdraw(int accountNumber) {
+    public void peformWithdraw() {
         double withdrawAmount = -1;
         while (withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
             withdrawAmount = keyboardInput.nextInt();
         }
-        bank.performWithdrawal(accountNumber, withdrawAmount);
+        try{
+            bank.performWithdrawal(currentAccount, withdrawAmount);
+        }
+        catch(IllegalArgumentException e){
+
+            System.out.println("Invalid Withdrawl Amount!");
+
+        }
     }
     
-    public void transferMoney(int fromAccount, int toAccount) {
+    public void transferMoney(String toAccount) {
         double transferAmount = -1;
         while (transferAmount < 0) {
             System.out.print("How much would you like to transfer: ");
             transferAmount = keyboardInput.nextInt();
         }
-        bank.transferMoney(fromAccount, toAccount, transferAmount);
+        bank.transferMoney(currentAccount, toAccount, transferAmount);
     }
 
-    public void collectFees(int accountNumber, double amount) {
-        bank.collectFees(accountNumber, amount);
+    public void collectFees(String customerAccount, double amount) {
+        AdministratorAccount currentAdminAccount = (AdministratorAccount) bank.getAccounts().get(currentAccount);
+        currentAdminAccount.updateLocalBankVault(bank.getBankVaultBalance());
+        try{
+            bank.collectFees(currentAccount, customerAccount, amount);
+        }
+        catch(IllegalArgumentException e){
+            System.out.println("Customer has insufficient funds");
+        }
     }
 
-    public void payInterest(int accountNumber, double interestRate) {
-        bank.payInterest(accountNumber, interestRate);
+    public void payInterest(String customerAccount, int interestRate) {
+        AdministratorAccount currentAdminAccount = (AdministratorAccount) bank.getAccounts().get(currentAccount);
+        currentAdminAccount.updateLocalBankVault(bank.getBankVaultBalance());
+        try{
+         bank.payInterest(currentAccount, customerAccount, interestRate);
+        }
+        catch(IllegalArgumentException e){
+            System.out.println("Bank does not have enough money to give to customer!");
+        }
     }
+
+    public void performPayLoan(){
+        System.out.print("Which administrator are you wishing to process your payment?");
+        String adminAccount = keyboardInput.next();
+        System.out.print("How much are you wishin to pay?");
+        double amount = keyboardInput.nextDouble();
+        if(bank.getAccounts().containsKey(adminAccount)){
+            try{
+                bank.performPayLoan(currentAccount, adminAccount, amount);
+            }
+            catch(IllegalArgumentException e){
+                return;
+            }
+        }
+        else{
+            System.out.println("Admin account does not exist!");
+        }
+
+
+    }
+
+    public void performGiveLoan(){
+
+
+        AdministratorAccount currentAdminAccount = (AdministratorAccount) bank.getAccounts().get(currentAccount);
+        currentAdminAccount.updateLocalBankVault(bank.getBankVaultBalance());
+
+        System.out.print("Which customer are you wishing to issue a loan?");
+        String customerAccount = keyboardInput.next();
+        if(bank.getAccounts().containsKey(customerAccount)){
+            System.out.print("How much is the loan?");
+            double amount = keyboardInput.nextDouble();
+            System.out.print("With what interest rate?");
+            int interestRate = keyboardInput.nextInt();
+            try{
+                bank.performGiveLoan(currentAccount, customerAccount, amount, interestRate);
+            }
+            catch(IllegalArgumentException e){
+                System.out.println("That is not a customer account!");
+            }
+        }
+        
+    }
+
+
+
 
     /// Password Managment
-    public boolean checkPassword(int accountNumber) {
-        if (getPassword(accountNumber) != null){
+    public boolean checkPassword() {
+        if (getPassword() != null){
             System.out.print("Please enter the password: ");
             String password = keyboardInput.next();
-            if (!password.equals(getPassword(accountNumber))) {
+            if (!password.equals(getPassword())) {
                 System.out.println("Incorrect password, returning to main menu.");
                 return false;
             }
@@ -220,18 +404,44 @@ public class MainMenu {
     } 
     
     
-    public String getPassword(int accountNumber) {
-        return bank.getPassword(accountNumber);
+    public String getPassword() {
+        return bank.getPassword(currentAccount);
     }
 
-    public void setPassword(int accountNumber) {
+    public void setPassword() {
         System.out.print("Please enter a new password: ");
         String password = keyboardInput.next();
-        bank.setPassword(accountNumber, password);
+        bank.setPassword(currentAccount, password);
     }
 
-    public void resetPassword(int accountNumber) {
-        bank.performPasswordReset(accountNumber);
+    public void resetPassword() {
+        bank.performPasswordReset(currentAccount);
+    }
+
+    public void switchAccount() {
+
+        HashMap<String, BankAccount> accounts = bank.getAccounts();
+        
+        if(accounts.size() > 0){
+        for (String username : accounts.keySet()) {
+            System.out.println("user: " + accounts.get(username));
+        }
+
+        System.out.print("Please select an account:");
+        String username = keyboardInput.next();
+        if(accounts.containsKey(username)){
+            this.currentAccount = username;
+        }
+        else{
+            System.out.println("Account does not exist!");
+        }
+      }
+      else{
+
+        System.out.println("There are currently no accounts, please create one");
+
+      }
+    
     }
 
     public void run() {
