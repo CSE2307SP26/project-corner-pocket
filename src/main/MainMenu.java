@@ -28,7 +28,7 @@ public class MainMenu {
 
             System.out.println("Currently not logged in, you have the following options: ");
             System.out.println("1. Create a new account");
-            System.out.println("2. Switch Account");
+            System.out.println("2. Switch to an existing Account");
             System.out.println("3. Exit the app");
 
 
@@ -38,8 +38,8 @@ public class MainMenu {
         
         else if(bank.getAccounts().get(currentAccount) instanceof CustomerAccount){
 
-          EXIT_SELECTION = 11;
-          MAX_SELECTION = 11;
+          EXIT_SELECTION = 12;
+          MAX_SELECTION = 12;
             
           System.out.println("Current Customer: " + currentAccount);
           System.out.println("1. Make a deposit");
@@ -49,24 +49,26 @@ public class MainMenu {
           System.out.println("5. Check Balance");
           System.out.println("6. Check transaction history");
           System.out.println("7. Transfer money to another account");
-          System.out.println("8. Set password");
-          System.out.println("9. Reset password");
-          System.out.println("10. Switch Account");
-          System.out.println("11. Exit the app");
+          System.out.println("8. Pay back part of loan");
+          System.out.println("9. Set password");
+          System.out.println("10. Reset password");
+          System.out.println("11. Switch to an existing account");
+          System.out.println("12. Exit the app");
         }
 
         else{
-            EXIT_SELECTION = 8;
-            MAX_SELECTION = 8;
+            EXIT_SELECTION = 9;
+            MAX_SELECTION = 9;
             System.out.println("Current Administrator: " + currentAccount);
             System.out.println("1. Create a new account");
             System.out.println("2. Close this account");
             System.out.println("3. Collect fees");
             System.out.println("4. Pay interest to a customer");
-            System.out.println("5. Set password");
-            System.out.println("6. Reset password");
-            System.out.println("7. Switch Account");
-            System.out.println("8. Exit the app");
+            System.out.println("5. Issue loan to a customer");
+            System.out.println("6. Set password");
+            System.out.println("7. Reset password");
+            System.out.println("8. Switch to an existing account");
+            System.out.println("9. Exit the app");
         }
 
     }
@@ -142,23 +144,29 @@ public class MainMenu {
                 transferMoney(toAccount);
 
                 break;
-
             case 8:
+                if (!checkPassword()){
+                    break;
+                }
+                performPayLoan();
+
+
+            case 9:
                 
                 if (checkPassword()) {
                     setPassword();
                 }
                 break;
-            case 9:
+            case 10:
                 if (checkPassword()) {
                     resetPassword();
                 }
                 break;
-            case 10:
+            case 11:
                 switchAccount();
                 break;
 
-            case 11:
+            case 12:
                 System.exit(0);
             }
         }
@@ -334,6 +342,52 @@ public class MainMenu {
             System.out.println("Bank does not have enough money to give to customer!");
         }
     }
+
+    public void performPayLoan(){
+        System.out.print("Which administrator are you wishing to process your payment?");
+        String adminAccount = keyboardInput.next();
+        System.out.print("How much are you wishin to pay?");
+        double amount = keyboardInput.nextDouble();
+        if(bank.getAccounts().containsKey(adminAccount)){
+            try{
+                bank.performPayLoan(currentAccount, adminAccount, amount);
+            }
+            catch(IllegalArgumentException e){
+                return;
+            }
+        }
+        else{
+            System.out.println("Admin account does not exist!");
+        }
+
+
+    }
+
+    public void performGiveLoan(){
+
+
+        AdministratorAccount currentAdminAccount = (AdministratorAccount) bank.getAccounts().get(currentAccount);
+        currentAdminAccount.updateLocalBankVault(bank.getBankVaultBalance());
+
+        System.out.print("Which customer are you wishing to issue a loan?");
+        String customerAccount = keyboardInput.next();
+        if(bank.getAccounts().containsKey(customerAccount)){
+            System.out.print("How much is the loan?");
+            double amount = keyboardInput.nextDouble();
+            System.out.print("With what interest rate?");
+            int interestRate = keyboardInput.nextInt();
+            try{
+                bank.performGiveLoan(currentAccount, customerAccount, amount, interestRate);
+            }
+            catch(IllegalArgumentException e){
+                System.out.println("That is not a customer account!");
+            }
+        }
+        
+    }
+
+
+
 
     /// Password Managment
     public boolean checkPassword() {

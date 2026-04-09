@@ -124,15 +124,35 @@ public class Bank {
         }
     }
 
-    public void setPassword(String username, String Password) {
-        accounts.get(username).setPassword(Password);
+    public void performPayLoan(String customerUsername, String adminUsername, double amount){
+        CustomerAccount customerAccount = (CustomerAccount) accounts.get(customerUsername);
+        BankAccount administratorAccount = accounts.get(adminUsername);
+        if(administratorAccount instanceof AdministratorAccount){
+           AdministratorAccount adminAccount = (AdministratorAccount) administratorAccount;
+           adminAccount.updateLocalBankVault(this.bankVaultBalance);
+           customerAccount.payLoan(accounts.get(adminUsername), amount);
+        }
+        else{
+            System.out.println("This is not an admin account!");
+        }
+    }
+
+    public void performGiveLoan(String adminUsername, String customerUsername, double amount, double interest){
+
     }
 
     public String getPassword(String username) {
         return accounts.get(username).getPassword();
     }
 
+    public void setPassword(String username, String password) {
+        accounts.get(username).setPassword(password);
+
+    }
+
     public void performPasswordReset(String username) {
         accounts.get(username).resetPassword();
     }
+
+    
 }

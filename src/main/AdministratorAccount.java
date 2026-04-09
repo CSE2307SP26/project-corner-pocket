@@ -52,7 +52,7 @@ public class AdministratorAccount extends BankAccount {
 
     }
 
-    public void giveLoan(BankAccount toAccount, double amount, double interestRate) {
+    public void giveLoan(BankAccount toAccount, double amount, int interestRate) {
         if (toAccount instanceof CustomerAccount) {
 
             CustomerAccount customerToAccount= (CustomerAccount)toAccount;
@@ -62,7 +62,9 @@ public class AdministratorAccount extends BankAccount {
             transferMoney(customerToAccount, amount - amount * interestRate * 0.01);
             customerToAccount.setLoanAmount(amount);
             
-
+        }
+        else{
+            throw new IllegalArgumentException();
         }
     }
 

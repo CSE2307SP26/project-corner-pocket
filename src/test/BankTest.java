@@ -93,11 +93,21 @@ public class BankTest {
     }
 
     @Test
-    public void testTwoOppositeTransfers(){
+    public void testTwoTransfersDifferentAdministrator(){
 
-        Bank bank = new Bank(20.00);
-        bank.createAccount(true, "adminAccount", "password123");
-        bank.createAccount(false, "customerAccount")
+        Bank bank = new Bank(200.00);
+        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+        AdministratorAccount administratorAccount = new AdministratorAccount("administratorAccount", "password123", 200.00);
+        AdministratorAccount administratorAccount2 = new AdministratorAccount("administratorAccount2", "password123", 200.00);
+
+        administratorAccount.transferMoney(customerAccount, 50.00);
+        bank.setBankVaultBalance(administratorAccount.updateBankVault());
+        administratorAccount2.updateLocalBankVault(bank.getBankVaultBalance());
+        administratorAccount2.transferMoney(customerAccount, 50.00);
+        bank.setBankVaultBalance(administratorAccount2.updateBankVault());
+
+        assertEquals(100.00, customerAccount.getBalance(), 0.05);
+        assertEquals(100.00, bank.getBankVaultBalance(), 0.05);
 
 
 

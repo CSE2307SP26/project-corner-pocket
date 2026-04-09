@@ -69,20 +69,17 @@ public class CustomerAccount extends BankAccount {
     }
 
     public void payLoan(BankAccount toAccount, double amount) {
-        if (toAccount instanceof AdministratorAccount) {
-            if (loanAmount <= amount) {
+        
+        if (loanAmount <= amount) {
 
                 this.transferMoney(toAccount, amount);
                 loanAmount = loanAmount - amount;
-            }
-            else {
-                System.out.println("Cannot transfer that much");
-            }
         }
         else {
-            throw new IllegalArgumentException();
+              System.out.println("Cannot transfer that much");
+              throw new IllegalArgumentException();
+            }
         }
+
     }
 
-    
-}
