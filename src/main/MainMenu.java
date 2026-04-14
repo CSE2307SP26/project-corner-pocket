@@ -360,6 +360,11 @@ public class MainMenu {
     public void payInterest(String customerAccount, int interestRate) {
         AdministratorAccount currentAdminAccount = (AdministratorAccount) bank.getAccounts().get(currentAccount);
         currentAdminAccount.updateLocalBankVault(bank.getBankVaultBalance());
+        int interest = interestRate;
+        // If the account is an investment account, it receives double the interest rate
+        if (bank.getAccountType(currentAccount).equals("Investment Account")) {
+            interest = interestRate * 2;
+        }
         try{
          bank.payInterest(currentAccount, customerAccount, interestRate);
         }

@@ -83,11 +83,18 @@ public class Bank {
 
     public void transferMoney(String fromUsername, String toUsername, double transferAmount) {
         // Checks to see if either account is not an educational account.
-        if (!accounts.get(fromUsername).getAccountType().equals("Educational Account") ||
-            !accounts.get(toUsername).getAccountType().equals("Educational Account")) {
+        if (accounts.get(fromUsername).getAccountType().equals("Educational Account") ||
+            accounts.get(toUsername).getAccountType().equals("Educational Account")) {
             System.out.println("Educational accounts cannot perform transfers between non Educational Accounts!");
             return;
         }
+
+        // Checks to see if the account being transfered from is an investment account
+        if (accounts.get(fromUsername).getAccountType().equals("Investment Account")) {
+            System.out.println("Investment accounts cannot perform transfers between accounts!");
+            return;
+        }
+
         accounts.get(fromUsername).transferMoney(accounts.get(toUsername), transferAmount);
 
     }
