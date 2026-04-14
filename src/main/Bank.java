@@ -72,7 +72,7 @@ public class Bank {
         BankAccount account = accounts.get(username);
         if(account instanceof CustomerAccount && getAccountType(username).equals("Standard Account")){
             CustomerAccount customerAccount = (CustomerAccount) accounts.get(username);
-            customerAccount.deposit(amount);
+            customerAccount.withdraw(amount);
         } else if (getAccountType(username).equals("Educational Account")){
             System.out.println("Educational accounts cannot perform withdrawals.");
         } else {
@@ -82,8 +82,13 @@ public class Bank {
     
 
     public void transferMoney(String fromUsername, String toUsername, double transferAmount) {
-
-       accounts.get(fromUsername).transferMoney(accounts.get(toUsername), transferAmount);
+        // Checks to see if either account is not an educational account.
+        if (!accounts.get(fromUsername).getAccountType().equals("Educational Account") ||
+            !accounts.get(toUsername).getAccountType().equals("Educational Account")) {
+            System.out.println("Educational accounts cannot perform transfers between non Educational Accounts!");
+            return;
+        }
+        accounts.get(fromUsername).transferMoney(accounts.get(toUsername), transferAmount);
 
     }
 

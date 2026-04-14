@@ -45,7 +45,10 @@ public abstract class BankAccount {
         this.accountType = accountType;
     }
 
-
+    // Used to proces the account information for display in the main menu
+    public String nameToString() {
+        return "Account Name: " + this.accountName + " (Type: " + this.accountType + ")";
+    }
 
     public abstract void transferMoney(BankAccount toAccount, double transferAmount);
 

@@ -234,7 +234,7 @@ public class MainMenu {
         /// Asks what account type you want to creat 
         String accountType = "Standard Account";
         if(!isAdmin){
-            System.out.print("What kind of account do you want to create?\n1. Standard Account\n2. Educational Account\n3. Investment Account");
+            System.out.print("What kind of account do you want to create?\n1. Standard Account\n2. Educational Account\n3. Investment Account\n:");
             int selection = keyboardInput.nextInt();
             while(selection < 1 || selection > 3){
                 System.out.print("Invalid selection, please select 1, 2, or 3: ");
@@ -449,7 +449,11 @@ public class MainMenu {
         
         if(accounts.size() > 0){
         for (String username : accounts.keySet()) {
-            System.out.println("user: " + accounts.get(username));
+            // Get the account object so we can use it
+            BankAccount acc = accounts.get(username); 
+            
+            // Print the username (key) followed by the account details
+            System.out.println("- " + username + " [" + acc.getAccountType() + "]");
         }
 
         System.out.print("Please select an account:");
