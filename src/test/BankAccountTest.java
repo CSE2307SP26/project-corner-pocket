@@ -214,6 +214,49 @@ public class BankAccountTest {
    }
 
 
+   @Test
+   public void testAccountType() {
+         CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+         customerAccount.setAccountType("Checking Account");
+         assertEquals("Checking Account", customerAccount.getAccountType());
+   }
+
+   @Test
+   public void testEducationalWithdrawalFail() {
+        Bank bank = new Bank(20.00);
+        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
+        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+        customerAccount.setAccountType("Educational Account");
+        customerAccount.deposit(100.00);
+        customerAccount.withdraw(20.00);
+        assertEquals(100, customerAccount.getBalance(), 0.05);
+   }
+
+   @Test
+   public void testEducationalWithdrawalSuccess() {
+        Bank bank = new Bank(20.00);
+        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
+        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+        customerAccount.setAccountType("Educational Account");
+        CustomerAccount customerAccount2 = new CustomerAccount("customerAccount");
+        customerAccount2.setAccountType("Educational Account");
+        customerAccount.deposit(100.00);
+        customerAccount.transferMoney(customerAccount2, 20.00);
+        assertEquals(80, customerAccount.getBalance(), 0.05);
+   }
+
+   @Test
+   public void testInvestmentInterest() {
+        Bank bank = new Bank(20.00);
+        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
+        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+        customerAccount.setAccountType("Investment Account");
+        customerAccount.deposit(100.00);
+        adminAccount.payInterest(customerAccount, 10);
+        bank.setBankVaultBalance(adminAccount.updateBankVault());
+        assertEquals(120.00, customerAccount.getBalance(), 0.05);
+        assertEquals(0.00, bank.getBankVaultBalance(), 0.05);
+   }
 
 }
 
