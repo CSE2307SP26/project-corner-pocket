@@ -70,9 +70,11 @@ public class Bank {
 
     public void performWithdrawal(String username, double amount){
         BankAccount account = accounts.get(username);
-        if(account instanceof CustomerAccount){
+        if(account instanceof CustomerAccount && getAccountType(username).equals("Standard Account")){
             CustomerAccount customerAccount = (CustomerAccount) accounts.get(username);
             customerAccount.deposit(amount);
+        } else if (getAccountType(username).equals("Educational Account")){
+            System.out.println("Educational accounts cannot perform withdrawals.");
         } else {
             System.out.println("Administrators cannot perform withdrawals."); 
         }
@@ -152,6 +154,18 @@ public class Bank {
 
     public void performPasswordReset(String username) {
         accounts.get(username).resetPassword();
+    }
+
+
+    // sets Account type for a given account
+    public void setAccountType(String username, String accountType) {
+        accounts.get(username).setAccountType(accountType);
+    }
+
+
+    //Gets the account type for a given account
+    public String getAccountType(String username) {
+        return accounts.get(username).getAccountType();
     }
 
     

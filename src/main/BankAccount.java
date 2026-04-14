@@ -7,13 +7,12 @@ public abstract class BankAccount {
   
     private final String accountName;
     private String password;
-    private final String accountType;
+    private String accountType;
     
 
-    public BankAccount(String accountName, String password, String accountType) {
+    public BankAccount(String accountName, String password) {
         this.accountName = accountName;
         setPassword(password);
-        this.accountType = accountType;
     }
 
 
@@ -42,8 +41,8 @@ public abstract class BankAccount {
     }
 
     // Sets the current account type 
-    public String setAccountType(String accountType) {
-        return this.accountType;
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
     }
 
 

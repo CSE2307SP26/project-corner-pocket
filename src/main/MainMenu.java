@@ -1,8 +1,7 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.HashMap;
+import java.util.Scanner;
 
 
 public class MainMenu {
@@ -231,6 +230,29 @@ public class MainMenu {
     public void createAccount() {
         System.out.print("Is this an administrator account? (true/false) ");
         Boolean isAdmin = keyboardInput.nextBoolean();
+
+        /// Asks what account type you want to creat 
+        String accountType = "Standard Account";
+        if(!isAdmin){
+            System.out.print("What kind of account do you want to create?\n1. Standard Account\n2. Educational Account\n3. Investment Account");
+            int selection = keyboardInput.nextInt();
+            while(selection < 1 || selection > 3){
+                System.out.print("Invalid selection, please select 1, 2, or 3: ");
+                selection = keyboardInput.nextInt();
+            }
+             switch(selection){
+                case 1:
+                    accountType = "Standard Account";
+                    break;
+                case 2:
+                    accountType = "Educational Account";
+                    break;
+                case 3:
+                    accountType = "Investment Account";
+                    break;
+            }
+        }
+
         System.out.print("What is the account's name?: ");
         String username = keyboardInput.next();
         String password = "";
@@ -255,6 +277,9 @@ public class MainMenu {
         catch(IllegalArgumentException e){
             System.out.println("Username is already taken!");
         }
+
+        // Sets the account type
+        bank.setAccountType(username, accountType);
     }
 
     public void closeAccount() {
