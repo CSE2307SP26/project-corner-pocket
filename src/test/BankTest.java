@@ -106,6 +106,7 @@ public class BankTest {
         assertEquals(700, bank.getBankVaultBalance(), 0.0001);
     }
 
+    @Test
     public void testCanWithdrawInvalidAge() {
 
         Bank bank = new Bank(500);
