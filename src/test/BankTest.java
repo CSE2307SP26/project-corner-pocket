@@ -14,7 +14,7 @@ public class BankTest {
     public void testCreateUserValid() {
         Bank bank = new Bank(1000);
 
-        bank.createUser("alice", "pass123", false);
+        bank.createUser("alice", "pass123", false, 18);
 
         User user = bank.getUser("alice");
 
@@ -26,10 +26,10 @@ public class BankTest {
     public void testCreateUserDuplicateThrowsException() {
         Bank bank = new Bank(1000);
 
-        bank.createUser("bob", "pass", false);
+        bank.createUser("bob", "pass", false, 18);
 
         try {
-            bank.createUser("bob", "pass2", false);
+            bank.createUser("bob", "pass2", false, 18);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertEquals("User exists", e.getMessage());
@@ -104,6 +104,18 @@ public class BankTest {
 
         assertEquals(100, acc.getBalance(), 0.0001);
         assertEquals(700, bank.getBankVaultBalance(), 0.0001);
+    }
+
+    @Test
+    public void testCanWithdrawInvalidAge() {
+
+        Bank bank = new Bank(500);
+        CustomerAccount acc = new CustomerAccount("test");
+        acc.deposit(50);
+        User user = new User("user1", "password123", false, 17);
+        
+        assertEquals(false, bank.canWithdraw(acc, user));
+
     }
 
     @Test
