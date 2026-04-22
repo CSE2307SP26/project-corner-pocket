@@ -1,124 +1,81 @@
 package test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import main.AdministratorAccount;
-import main.Bank;
-import main.CustomerAccount;
-
+import static org.junit.jupiter.api.Assertions.*;
+import main.*;
 import org.junit.jupiter.api.Test;
 
-import junit.framework.AssertionFailedError;
-
 public class BankTest {
-    
+
     @Test
-    public void testCloseAccountSize(){
-            Bank bank = new Bank(20.00);
-            bank.createAccount(false, "testAccount", null);
-            bank.createAccount(false, "testAccount2", null);
-            bank.closeAccount("testAccount2");
+    public void testCloseAccountSize() {
+        Bank bank = new Bank(20.00);
 
-            assertEquals(2, bank.getAccounts().size());
+        bank.createAccount(false, "a", "pw");
+        bank.createAccount(false, "b", "pw");
 
+        bank.closeAccount("b");
+
+        assertEquals(2, bank.getAccounts().size()); 
+        // includes root + a
     }
 
     @Test
-    public void testCloseInvalidAccount(){
-            Bank bank = new Bank(20.00);
-            bank.createAccount(false, "testAccount", null);
-            try {
-                bank.closeAccount("testAccount2");
-                fail();
-            } 
-            catch (IllegalArgumentException e) {
-                //do nothing, test passes
-            }
+    public void testCloseInvalidAccount() {
+        Bank bank = new Bank(20.00);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            bank.closeAccount("doesNotExist");
+        });
     }
 
     @Test
     public void testCreateAccount() {
         Bank bank = new Bank(20.00);
 
-        bank.createAccount(false, "testAccount", "password123");
+        bank.createAccount(false, "test", "pw");
 
         assertEquals(2, bank.getAccounts().size());
     }
 
     @Test
-    public void testCreateAccountWithDuplicateUsername(){
-
+    public void testCreateDuplicateAccount() {
         Bank bank = new Bank(20.00);
-        try{
-            bank.createAccount(false, "testAccount", null);
-            bank.createAccount(false, "testAccount", null);
-            fail();
-        }
-        catch(IllegalArgumentException e){
-            //do nothing, test passes
-        }
+
+        bank.createAccount(false, "test", "pw");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            bank.createAccount(false, "test", "pw");
+        });
     }
 
     @Test
-    public void testCreateCustomerAccount(){
+    public void testCreateCustomerAccountType() {
         Bank bank = new Bank(20.00);
 
-        bank.createAccount(false, "testAccount", "password123");
+        bank.createAccount(false, "test", "pw");
 
-        assertEquals(true, bank.getAccounts().get("testAccount") instanceof CustomerAccount);
+        assertTrue(
+            bank.getAccounts().get("test") instanceof CustomerAccount
+        );
     }
 
     @Test
-    public void testCreateCustomerAccountWithoutPassword(){
-        
+    public void testCreateAccountPasswordNullAllowed() {
         Bank bank = new Bank(20.00);
 
-        bank.createAccount(false, "testAccount", null);
+        bank.createAccount(false, "test", null);
 
-        assertEquals(null, bank.getAccounts().get("testAccount").getPassword());
-
+        assertNull(bank.getAccounts().get("test").getPassword());
     }
 
     @Test
-    public void testCreateAdminAccount(){
-
+    public void testCreateAdminAccount() {
         Bank bank = new Bank(20.00);
 
-        bank.createAccount(true, "testAccount", "password123");
+        bank.createAccount(true, "admin1", "pw");
 
-        assertEquals(true, bank.getAccounts().get("testAccount") instanceof AdministratorAccount);
-
-
+        assertTrue(
+            bank.getAccounts().get("admin1") instanceof AdministratorAccount
+        );
     }
-
-    @Test
-    public void testTwoTransfersDifferentAdministrator(){
-
-        Bank bank = new Bank(200.00);
-        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
-        AdministratorAccount administratorAccount = new AdministratorAccount("administratorAccount", "password123", 200.00);
-        AdministratorAccount administratorAccount2 = new AdministratorAccount("administratorAccount2", "password123", 200.00);
-
-        administratorAccount.transferMoney(customerAccount, 50.00);
-        bank.setBankVaultBalance(administratorAccount.updateBankVault());
-        administratorAccount2.updateLocalBankVault(bank.getBankVaultBalance());
-        administratorAccount2.transferMoney(customerAccount, 50.00);
-        bank.setBankVaultBalance(administratorAccount2.updateBankVault());
-
-        assertEquals(100.00, customerAccount.getBalance(), 0.05);
-        assertEquals(100.00, bank.getBankVaultBalance(), 0.05);
-
-
-
-    }
-
-
-
-
-
-        
-
-
-    
 }

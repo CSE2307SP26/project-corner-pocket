@@ -2,72 +2,29 @@ package main;
 
 public class AdministratorAccount extends BankAccount {
 
-    private double bankVault;
+    private Bank bank;
 
-    public AdministratorAccount(String accountName,String password, double bankVault) { //administrator should always be created with a password
-        super(accountName, password); 
-        this.bankVault = bankVault;
+    public AdministratorAccount(String accountName, Bank bank) {
+        super(accountName);
+        this.bank = bank;
     }
 
-    public void collectFees(BankAccount fromAccount,double amount) {
-
-       fromAccount.transferMoney(this, amount);      
-
+    public void collectFees(CustomerAccount from, double amount) {
+        bank.transfer(from, null, amount);
+        bank.depositToVault(amount);
     }
 
-    public void payInterest(CustomerAccount toAccount , int interestRate) {
+    public void payInterest(CustomerAccount account, int rate) {
+        double interest = account.getBalance() * rate / 100.0;
 
-        this.transferMoney(toAccount, toAccount.getBalance() * interestRate * 0.01);
-        
+        bank.withdrawFromVault(interest);
+        account.deposit(interest);
     }
 
-    public void transferMoney(BankAccount toAccount, double transferAmount) {
+    public void giveLoan(CustomerAccount account, double amount, int rate) {
+        account.setLoanAmount(account.getLoanAmount() + amount);
 
-        if (toAccount instanceof CustomerAccount) {
-           bankVault = bankVault - transferAmount;
-
-           toAccount.receiveTransfer(transferAmount);
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
-
+        bank.withdrawFromVault(amount);
+        account.deposit(amount);
     }
-
-    public void receiveTransfer(double transferAmount) {
-
-        bankVault = bankVault + transferAmount;
-        
-    }
-
-    public double updateBankVault(){
-
-        return this.bankVault;
-
-    }
-
-    public void updateLocalBankVault(double bankVault){
-
-        this.bankVault = bankVault;
-
-    }
-
-    public void giveLoan(BankAccount toAccount, double amount, int interestRate) {
-        if (toAccount instanceof CustomerAccount) {
-
-            CustomerAccount customerToAccount= (CustomerAccount)toAccount;
-
-            customerToAccount.setLoanAmount(customerToAccount.getLoanAmount() + amount);
-            
-            transferMoney(customerToAccount, amount - amount * interestRate * 0.01);
-            customerToAccount.setLoanAmount(amount);
-            
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
-    }
-
-
-    
 }
