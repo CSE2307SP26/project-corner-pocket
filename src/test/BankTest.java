@@ -6,10 +6,6 @@ import org.junit.Test;
 
 public class BankTest {
 
-    // -------------------------
-    // USER CREATION TESTS
-    // -------------------------
-
     @Test
     public void testCreateUserValid() {
         Bank bank = new Bank(1000);

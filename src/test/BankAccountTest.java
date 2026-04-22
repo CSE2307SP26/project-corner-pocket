@@ -114,6 +114,7 @@ public class BankAccountTest {
         Bank bank = new Bank(100);
 
         CustomerAccount acc = new CustomerAccount("c");
+        acc.setAccountType("Normal");
         acc.deposit(100);
 
         User adminUser = bank.getUser("root");

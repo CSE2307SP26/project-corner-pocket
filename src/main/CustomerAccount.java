@@ -42,10 +42,6 @@ public class CustomerAccount extends BankAccount {
 
     public void payLoan(double amount){
 
-        
-
-
-
     }
 
     public ArrayList<String> getTransactionHistory() {

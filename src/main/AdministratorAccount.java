@@ -21,6 +21,12 @@ public class AdministratorAccount extends BankAccount {
         }
         double interest = account.getBalance() * rate / 100.0;
 
+        if(account.getAccountType().equals("Investment Account")){
+            interest = interest*2;
+        }
+
+        interest = Math.min(interest, 100);
+
         if(interest > bank.getBankVaultBalance()){
             System.out.println("Bank vault does not have enough to pay!");
             throw new IllegalArgumentException();
