@@ -8,12 +8,14 @@ public class User {
     private String password;
     private final HashMap<String, BankAccount> accounts;
     private boolean isAdmin;
+    private int age;
 
-    public User(String username, String password, Boolean isAdmin) {
+    public User(String username, String password, Boolean isAdmin, int age) {
         this.username = username;
         this.password = password;
         this.accounts = new HashMap<>();
         this.isAdmin = isAdmin;
+        this.age = age;
     }
 
     public boolean checkPassword(String input) {
@@ -26,6 +28,10 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public int getAge() {
+        return age;
     }
 
     public HashMap<String, BankAccount> getAccounts() {

@@ -3,8 +3,11 @@ package test;
 import main.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.Test;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class BankAccountTest {
+
 
     @Test
     public void testDeposit() {
@@ -60,6 +63,21 @@ public class BankAccountTest {
 
         assertEquals(0, a.getBalance(), 0.01);
         assertEquals(10, b.getBalance(), 0.01);
+    }
+
+    @Test
+    public void testBalanceLow() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        CustomerAccount a = new CustomerAccount("a");
+        a.deposit(10);
+
+        a.warnUser();
+
+        System.setOut(System.out); // restore stdout
+        assertEquals("WARNING: account balance low.", outputStream.toString().trim());
+        
     }
 
 

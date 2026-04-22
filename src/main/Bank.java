@@ -10,25 +10,25 @@ public class Bank {
     public Bank(double bankVaultBalance) {
         this.bankVaultBalance = bankVaultBalance;
 
-        User root = new User("root", "toor", true);
+        User root = new User("root", "toor", true, 18);
         root.addAccount(new AdministratorAccount("root", this));
 
         users.put("root", root);
     }
 
-    public void createUser(String username, String password, Boolean isAdmin) {
+    public void createUser(String username, String password, Boolean isAdmin, int age) {
         if (users.containsKey(username)) {
             throw new IllegalArgumentException("User exists");
         }
-        users.put(username, new User(username, password, isAdmin));
+        users.put(username, new User(username, password, isAdmin, age));
     }
 
     public User getUser(String username) {
         return users.get(username);
     }
 
-    public boolean canWithdraw(BankAccount account) {
-        if (account instanceof AdministratorAccount) return false;
+    public boolean canWithdraw(BankAccount account, User user) {
+        if (account instanceof AdministratorAccount || user.getAge() < 18) return false;
         return !"Educational Account".equals(account.getAccountType());
     }
 

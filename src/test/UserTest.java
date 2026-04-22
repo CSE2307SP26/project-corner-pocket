@@ -10,7 +10,7 @@ public class UserTest {
 
     public void testCreateUser(){
 
-        User user = new User("user1", "password123", false);
+        User user = new User("user1", "password123", false, 18);
 
         assertEquals("user1", user.getUsername());
         assertEquals("password123", user.getPassword());
@@ -21,7 +21,7 @@ public class UserTest {
 
     public void testSetPassword(){
 
-        User user = new User("user1", "password123", false);
+        User user = new User("user1", "password123", false, 18);
 
         user.setPassword("abcdefg");
 
@@ -33,7 +33,7 @@ public class UserTest {
 
     public void testCheckPassword(){
 
-        User user = new User("user1", "password123", false);
+        User user = new User("user1", "password123", false, 18);
 
 
         assertEquals(true, user.checkPassword("password123") );
@@ -44,7 +44,7 @@ public class UserTest {
 
     public void testInvalidCheckPassword(){
 
-        User user = new User("user1", "password123", false);
+        User user = new User("user1", "password123", false, 18);
 
         assertEquals(false, user.checkPassword("abcdefg"));
 
@@ -53,7 +53,7 @@ public class UserTest {
     @Test
 
     public void testAddAccount(){
-        User user = new User("user1", "password123", false);
+        User user = new User("user1", "password123", false, 18);
 
         BankAccount account = new CustomerAccount("customeraccount1");
 
@@ -68,7 +68,7 @@ public class UserTest {
 
     public void testAddDuplicateUsernameAccounts(){
 
-         User user = new User("user1", "password123", false);
+         User user = new User("user1", "password123", false, 18);
 
         BankAccount account = new CustomerAccount("customeraccount1");
         
@@ -91,7 +91,7 @@ public class UserTest {
 
         Bank bank = new Bank(10.0);
 
-        User user = new User("admin1", "password123", true);
+        User user = new User("admin1", "password123", true, 18);
 
         BankAccount account = new AdministratorAccount("adminaccount1", bank);
 
@@ -107,7 +107,7 @@ public class UserTest {
 
         Bank bank = new Bank(10.0);
 
-        User user = new User("admin1", "password123", false);
+        User user = new User("admin1", "password123", false, 18);
 
         BankAccount account = new AdministratorAccount("adminaccount1", bank);
 
@@ -127,7 +127,7 @@ public class UserTest {
 
     public void testRemoveAccount(){
 
-        User user = new User("user1", "password123", false);
+        User user = new User("user1", "password123", false, 18);
 
         BankAccount account = new CustomerAccount("customeraccount1");
 
@@ -143,7 +143,7 @@ public class UserTest {
 
     public void testRemoveNonExistingAccount(){
 
-        User user = new User("user1", "password123", false);
+        User user = new User("user1", "password123", false, 18);
 
         BankAccount account = new CustomerAccount("customeraccount1");
 

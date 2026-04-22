@@ -43,6 +43,13 @@ public class CustomerAccount extends BankAccount {
     public void payLoan(double amount){
 
     }
+    
+    public void warnUser() {
+        if (this.balance < 50) {
+            System.out.println("WARNING: account balance low.");
+        }
+    }
+
 
     public ArrayList<String> getTransactionHistory() {
       return new ArrayList<>(transactionHistory);
