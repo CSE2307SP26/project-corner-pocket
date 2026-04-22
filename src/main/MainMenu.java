@@ -78,7 +78,7 @@ public class MainMenu {
         if (currentUser == null) {
 
             switch (selection) {
-                case 1 -> createAccountAndLogin();
+                //case 1 -> createAccountAndLogin();
                 case 2 -> loginUser();
                 case 3 -> System.exit(0);
             }
@@ -114,7 +114,7 @@ public class MainMenu {
 
             case 7 -> transferMoney();
 
-            case 8 -> acc.payLoan(askAmount("loan payment"));
+            //case 8 -> acc.payLoan(askAmount("loan payment"));
 
             case 9 -> switchAccount();
 
@@ -168,19 +168,16 @@ public class MainMenu {
     BankAccount acc;
 
     if (isAdmin) {
-        acc = new AdministratorAccount(name, "", bank.getBankVaultBalance());
+        acc = new AdministratorAccount(name, bank);
     } else {
         acc = new CustomerAccount(name);
     }
-
-    bank.addAccount(acc);
     currentUser.addAccount(acc);
 }
 
  
     private void closeAccount() {
         currentUser.removeAccount(currentAccount);
-        bank.closeAccount(currentAccount.getAccountName());
         currentAccount = null;
     }
 
@@ -189,7 +186,7 @@ public class MainMenu {
         System.out.print("Target account: ");
         String toName = keyboardInput.next();
 
-        BankAccount to = bank.getAccount(toName);
+        BankAccount to = currentUser.getAccounts().get(toName);
 
         if (to == null) {
             System.out.println("Account not found.");
@@ -199,7 +196,7 @@ public class MainMenu {
         System.out.print("Amount: ");
         double amount = keyboardInput.nextDouble();
 
-        ((CustomerAccount) currentAccount).transferMoney(bank, to, amount);
+        bank.transfer(this.currentAccount, to, amount);
     }
 
     private void collectFees(AdministratorAccount admin) {
@@ -207,12 +204,12 @@ public class MainMenu {
         System.out.print("From account: ");
         String name = keyboardInput.next();
 
-        BankAccount from = bank.getAccount(name);
+        //BankAccount from = bank.getAccount(name);
 
         System.out.print("Amount: ");
         double amount = keyboardInput.nextDouble();
 
-        admin.collectFees(from, amount);
+        //admin.collectFees(from, amount);
     }
 
     private void payInterest(AdministratorAccount admin) {
@@ -220,14 +217,14 @@ public class MainMenu {
         System.out.print("Customer account: ");
         String name = keyboardInput.next();
 
-        BankAccount acc = bank.getAccount(name);
+        //BankAccount acc = bank.getAccount(name);
 
         System.out.print("Rate: ");
         int rate = keyboardInput.nextInt();
 
-        if (acc instanceof CustomerAccount c) {
+        /*if (acc instanceof CustomerAccount c) {
             admin.payInterest(c, rate);
-        }
+        }*/
     }
 
     private void issueLoan(AdministratorAccount admin) {
@@ -235,7 +232,7 @@ public class MainMenu {
         System.out.print("Customer account: ");
         String name = keyboardInput.next();
 
-        BankAccount acc = bank.getAccount(name);
+        //BankAccount acc = bank.getAccount(name);
 
         System.out.print("Amount: ");
         double amount = keyboardInput.nextDouble();
@@ -243,23 +240,23 @@ public class MainMenu {
         System.out.print("Interest: ");
         int rate = keyboardInput.nextInt();
 
-        if (acc instanceof CustomerAccount c) {
+        /*if (acc instanceof CustomerAccount c) {
             admin.giveLoan(c, amount, rate);
-        }
+        }*/
     }
 
     private void switchAccount() {
 
         System.out.println("Your accounts:");
 
-        for (BankAccount acc : currentUser.getAccounts()) {
+        for (BankAccount acc : currentUser.getAccounts().values()) {
             System.out.println("- " + acc.getAccountName());
         }
 
         System.out.print("Select account: ");
         String name = keyboardInput.next();
 
-        for (BankAccount acc : currentUser.getAccounts()) {
+        for (BankAccount acc : currentUser.getAccounts().values()) {
             if (acc.getAccountName().equals(name)) {
                 currentAccount = acc;
                 return;

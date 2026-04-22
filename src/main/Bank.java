@@ -10,17 +10,17 @@ public class Bank {
     public Bank(double bankVaultBalance) {
         this.bankVaultBalance = bankVaultBalance;
 
-        User root = new User("root", "toor");
+        User root = new User("root", "toor", true);
         root.addAccount(new AdministratorAccount("root", this));
 
         users.put("root", root);
     }
 
-    public void createUser(String username, String password) {
+    public void createUser(String username, String password, Boolean isAdmin) {
         if (users.containsKey(username)) {
             throw new IllegalArgumentException("User exists");
         }
-        users.put(username, new User(username, password));
+        users.put(username, new User(username, password, isAdmin));
     }
 
     public User getUser(String username) {
@@ -71,6 +71,13 @@ public class Bank {
             throw new IllegalArgumentException("Insufficient vault funds");
         }
         bankVaultBalance -= amount;
+    }
+
+    public void transferToVault(CustomerAccount customer, double amount){
+        if (amount <= 0) throw new IllegalArgumentException();
+
+        customer.withdraw(amount);
+        depositToVault(amount);
     }
 
     public double getBankVaultBalance() {

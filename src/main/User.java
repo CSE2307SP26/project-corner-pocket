@@ -1,17 +1,19 @@
 package main;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
 
     private final String username;
     private String password;
-    private final ArrayList<BankAccount> accounts;
+    private final HashMap<String, BankAccount> accounts;
+    private boolean isAdmin;
 
-    public User(String username, String password) {
+    public User(String username, String password, Boolean isAdmin) {
         this.username = username;
         this.password = password;
-        this.accounts = new ArrayList<>();
+        this.accounts = new HashMap<>();
+        this.isAdmin = isAdmin;
     }
 
     public boolean checkPassword(String input) {
@@ -26,29 +28,32 @@ public class User {
         return username;
     }
 
-    public ArrayList<BankAccount> getAccounts() {
+    public HashMap<String, BankAccount> getAccounts() {
         return accounts;
     }
 
     public void addAccount(BankAccount account) {
-    for (BankAccount acc : accounts) {
-        if (acc.getAccountName().equals(account.getAccountName())) {
-            throw new IllegalArgumentException("Account name already exists");
+    if(!isAdmin){
+        if(account instanceof AdministratorAccount){
+            System.out.println("You can not create administrator accounts!");
+            throw new IllegalArgumentException();
         }
     }
-    accounts.add(account);
+    if(accounts.containsKey(account.getAccountName())){
+        throw new IllegalArgumentException();
+    }
+    accounts.put(account.getAccountName(), account);
 }
 
     public void removeAccount(BankAccount account) {
-        accounts.remove(account);
+        if(!accounts.containsValue(account)){
+            System.out.println("There is no such account!");
+            throw new IllegalArgumentException();
+        }
+        accounts.remove(account.getAccountName());
     }
 
-    public boolean isAdmin() {
-    for (BankAccount account : accounts) {
-        if (account instanceof AdministratorAccount) {
-            return true;
-        }
+    public String getPassword(){
+        return this.password;
     }
-    return false;
-}
 }

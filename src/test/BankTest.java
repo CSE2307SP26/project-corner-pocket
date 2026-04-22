@@ -1,81 +1,122 @@
 package test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import main.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
 
 public class BankTest {
 
+    // -------------------------
+    // USER CREATION TESTS
+    // -------------------------
+
     @Test
-    public void testCloseAccountSize() {
-        Bank bank = new Bank(20.00);
+    public void testCreateUserValid() {
+        Bank bank = new Bank(1000);
 
-        bank.createAccount(false, "a", "pw");
-        bank.createAccount(false, "b", "pw");
+        bank.createUser("alice", "pass123", false);
 
-        bank.closeAccount("b");
+        User user = bank.getUser("alice");
 
-        assertEquals(2, bank.getAccounts().size()); 
-        // includes root + a
+        assertNotNull(user);
+        assertEquals("alice", user.getUsername());
     }
 
     @Test
-    public void testCloseInvalidAccount() {
-        Bank bank = new Bank(20.00);
+    public void testCreateUserDuplicateThrowsException() {
+        Bank bank = new Bank(1000);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            bank.closeAccount("doesNotExist");
-        });
+        bank.createUser("bob", "pass", false);
+
+        try {
+            bank.createUser("bob", "pass2", false);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("User exists", e.getMessage());
+        }
     }
 
     @Test
-    public void testCreateAccount() {
-        Bank bank = new Bank(20.00);
+    public void testDepositToVaultValid() {
+        Bank bank = new Bank(500);
 
-        bank.createAccount(false, "test", "pw");
+        bank.depositToVault(200);
 
-        assertEquals(2, bank.getAccounts().size());
+        assertEquals(700, bank.getBankVaultBalance(), 0.0001);
     }
 
     @Test
-    public void testCreateDuplicateAccount() {
-        Bank bank = new Bank(20.00);
+    public void testDepositToVaultInvalid() {
+        Bank bank = new Bank(500);
 
-        bank.createAccount(false, "test", "pw");
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            bank.createAccount(false, "test", "pw");
-        });
+        try {
+            bank.depositToVault(-50);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     @Test
-    public void testCreateCustomerAccountType() {
-        Bank bank = new Bank(20.00);
+    public void testWithdrawFromVaultValid() {
+        Bank bank = new Bank(500);
 
-        bank.createAccount(false, "test", "pw");
+        bank.withdrawFromVault(200);
 
-        assertTrue(
-            bank.getAccounts().get("test") instanceof CustomerAccount
-        );
+        assertEquals(300, bank.getBankVaultBalance(), 0.0001);
     }
 
     @Test
-    public void testCreateAccountPasswordNullAllowed() {
-        Bank bank = new Bank(20.00);
+    public void testWithdrawFromVaultInsufficientFunds() {
+        Bank bank = new Bank(100);
 
-        bank.createAccount(false, "test", null);
-
-        assertNull(bank.getAccounts().get("test").getPassword());
+        try {
+            bank.withdrawFromVault(500);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Insufficient vault funds", e.getMessage());
+        }
     }
 
     @Test
-    public void testCreateAdminAccount() {
-        Bank bank = new Bank(20.00);
+    public void testTransferInvalidAmount() {
+        Bank bank = new Bank(1000);
 
-        bank.createAccount(true, "admin1", "pw");
+        CustomerAccount acc1 = new CustomerAccount("Checking");
+        CustomerAccount acc2 = new CustomerAccount("Checking");
 
-        assertTrue(
-            bank.getAccounts().get("admin1") instanceof AdministratorAccount
-        );
+        try {
+            bank.transfer(acc1, acc2, -10);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testTransferToVaultValid() {
+        Bank bank = new Bank(500);
+
+        CustomerAccount acc = new CustomerAccount("Checking");
+        acc.deposit(300);
+
+        bank.transferToVault(acc, 200);
+
+        assertEquals(100, acc.getBalance(), 0.0001);
+        assertEquals(700, bank.getBankVaultBalance(), 0.0001);
+    }
+
+    @Test
+    public void testTransferToVaultInvalid() {
+        Bank bank = new Bank(500);
+
+        CustomerAccount acc = new CustomerAccount("Checking");
+
+        try {
+            bank.transferToVault(acc, 0);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 }

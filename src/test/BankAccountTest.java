@@ -2,7 +2,7 @@ package test;
 
 import main.*;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class BankAccountTest {
 
@@ -51,11 +51,12 @@ public class BankAccountTest {
 
     @Test
     public void testTransferBetweenCustomers() {
+        Bank bank = new Bank(50.0);
         CustomerAccount a = new CustomerAccount("a");
         CustomerAccount b = new CustomerAccount("b");
 
         a.deposit(10);
-        a.transferTo(b, 10);
+        bank.transfer(a, b, 10);
 
         assertEquals(0, a.getBalance(), 0.01);
         assertEquals(10, b.getBalance(), 0.01);
@@ -81,15 +82,13 @@ public class BankAccountTest {
         Bank bank = new Bank(100);
 
         User adminUser = bank.getUser("root");
-        AdministratorAccount admin =
-                (AdministratorAccount) adminUser.getAccounts().get(0);
 
         CustomerAccount acc = new CustomerAccount("c");
 
-        admin.giveLoan(acc, 50, 10);
+        ((AdministratorAccount) adminUser.getAccounts().get("root")).giveLoan(acc, 50, 10);
 
         assertEquals(50, acc.getBalance(), 0.01);
-        assertEquals(150, bank.getBankVaultBalance(), 0.01);
+        assertEquals(50, bank.getBankVaultBalance(), 0.01);
         assertEquals(55, acc.getLoanAmount(), 0.01);
     }
 
@@ -102,7 +101,7 @@ public class BankAccountTest {
 
         User adminUser = bank.getUser("root");
         AdministratorAccount admin =
-                (AdministratorAccount) adminUser.getAccounts().get(0);
+                (AdministratorAccount) adminUser.getAccounts().get("root");
 
         admin.collectFees(acc, 20);
 
@@ -119,11 +118,55 @@ public class BankAccountTest {
 
         User adminUser = bank.getUser("root");
         AdministratorAccount admin =
-                (AdministratorAccount) adminUser.getAccounts().get(0);
+                (AdministratorAccount) adminUser.getAccounts().get("root");
 
         admin.payInterest(acc, 10);
 
         assertEquals(110, acc.getBalance(), 0.01);
         assertEquals(90, bank.getBankVaultBalance(), 0.01);
+    }
+
+    @Test
+    public void testInvalidPayInterestWithInvalidRate(){
+
+        Bank bank = new Bank(100);
+
+        CustomerAccount acc = new CustomerAccount("c");
+        acc.deposit(100);
+
+        User adminUser = bank.getUser("root");
+        AdministratorAccount admin =
+                (AdministratorAccount) adminUser.getAccounts().get("root");
+
+        try{
+            admin.payInterest(acc, 1000);
+            fail();
+        }
+        catch(Exception e){
+            //test passes
+        }
+
+    }
+
+    @Test
+    public void testInvalidPayInterestGreaterThanBankVault(){
+
+        Bank bank = new Bank(10);
+
+        CustomerAccount acc = new CustomerAccount("c");
+        acc.deposit(100);
+
+        User adminUser = bank.getUser("root");
+        AdministratorAccount admin =
+                (AdministratorAccount) adminUser.getAccounts().get("root");
+
+        try{
+            admin.payInterest(acc, 20);
+            fail();
+        }
+        catch(Exception e){
+            //test passes
+        }
+
     }
 }

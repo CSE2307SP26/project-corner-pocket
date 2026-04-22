@@ -17,7 +17,7 @@ public class CustomerAccount extends BankAccount {
     public void deposit(double amount) {
         if (amount <= 0) throw new IllegalArgumentException();
         balance += amount;
-        transactionHistory.add("Deposited $" + amount);
+        transactionHistory.add("Deposited: $" + amount);
     }
 
     public void withdraw(double amount) {
@@ -25,7 +25,7 @@ public class CustomerAccount extends BankAccount {
         if (balance < amount) throw new IllegalArgumentException("Insufficient funds");
 
         balance -= amount;
-        transactionHistory.add("Withdrew $" + amount);
+        transactionHistory.add("Withdrew: $" + amount);
     }
 
     public double getBalance() {
@@ -38,5 +38,17 @@ public class CustomerAccount extends BankAccount {
 
     public void setLoanAmount(double loanAmount) {
         this.loanAmount = loanAmount;
+    }
+
+    public void payLoan(double amount){
+
+        
+
+
+
+    }
+
+    public ArrayList<String> getTransactionHistory() {
+      return new ArrayList<>(transactionHistory);
     }
 }

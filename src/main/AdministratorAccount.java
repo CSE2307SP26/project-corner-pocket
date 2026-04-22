@@ -10,19 +10,29 @@ public class AdministratorAccount extends BankAccount {
     }
 
     public void collectFees(CustomerAccount from, double amount) {
-        bank.transfer(from, null, amount);
+        from.withdraw(amount);
         bank.depositToVault(amount);
     }
 
     public void payInterest(CustomerAccount account, int rate) {
+        if(rate > 100 || rate < 0){
+             System.out.println("Invalid interest rate!");
+             throw new IllegalArgumentException();
+        }
         double interest = account.getBalance() * rate / 100.0;
+
+        if(interest > bank.getBankVaultBalance()){
+            System.out.println("Bank vault does not have enough to pay!");
+            throw new IllegalArgumentException();
+        }
 
         bank.withdrawFromVault(interest);
         account.deposit(interest);
     }
 
     public void giveLoan(CustomerAccount account, double amount, int rate) {
-        account.setLoanAmount(account.getLoanAmount() + amount);
+        double interest = amount/rate;
+        account.setLoanAmount(account.getLoanAmount() + amount + interest);
 
         bank.withdrawFromVault(amount);
         account.deposit(amount);
