@@ -28,7 +28,10 @@ public class Bank {
     }
 
     public boolean canWithdraw(BankAccount account, User user) {
-        if (account instanceof AdministratorAccount || user.getAge() < 18) return false;
+
+        if (account instanceof AdministratorAccount || user.getAge() < 18)
+            return false;
+
         return !"Educational Account".equals(account.getAccountType());
     }
 
@@ -41,6 +44,17 @@ public class Bank {
 
         return !("Educational Account".equals(fromType)
               || "Educational Account".equals(toType));
+    }
+
+    public void withdraw(CustomerAccount account, User user, double amount) {
+
+        if (amount <= 0) throw new IllegalArgumentException();
+
+        if (!canWithdraw(account, user)) {
+            throw new IllegalArgumentException("Withdrawal not allowed");
+        }
+
+        account.withdraw(amount);
     }
 
     public void transfer(BankAccount from, BankAccount to, double amount) {
@@ -65,19 +79,24 @@ public class Bank {
         bankVaultBalance += amount;
     }
 
+    public void transferToVault(CustomerAccount customer, User user, double amount) {
+
+    if (amount < 0) {
+        throw new IllegalArgumentException("Invalid amount");
+    }
+    if (!canWithdraw(customer, user)) {
+        throw new IllegalArgumentException("Withdrawal not allowed for this account type");
+    }
+    customer.withdraw(amount);
+    depositToVault(amount);
+}
+
     public void withdrawFromVault(double amount) {
         if (amount <= 0) throw new IllegalArgumentException();
         if (bankVaultBalance < amount) {
             throw new IllegalArgumentException("Insufficient vault funds");
         }
         bankVaultBalance -= amount;
-    }
-
-    public void transferToVault(CustomerAccount customer, double amount){
-        if (amount <= 0) throw new IllegalArgumentException();
-
-        customer.withdraw(amount);
-        depositToVault(amount);
     }
 
     public double getBankVaultBalance() {

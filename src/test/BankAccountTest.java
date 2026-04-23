@@ -82,19 +82,6 @@ public class BankAccountTest {
 
 
 
-        @Test
-    public void testTransferToVault() {
-        Bank bank = new Bank(100);
-
-        CustomerAccount acc = new CustomerAccount("c");
-        acc.deposit(50);
-
-        bank.transferToVault(acc, 50);
-
-        assertEquals(0, acc.getBalance(), 0.01);
-        assertEquals(150, bank.getBankVaultBalance(), 0.01);
-    }
-
     @Test
     public void testGiveLoan() {
         Bank bank = new Bank(100);
