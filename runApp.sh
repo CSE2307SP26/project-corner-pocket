@@ -1,5 +1,7 @@
 #!/bin/bash
 
-cd src
+cd src || exit
+
 javac main/*.java
+
 java main.MainMenu

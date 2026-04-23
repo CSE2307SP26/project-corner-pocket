@@ -27,6 +27,10 @@ public class Bank {
         return users.get(username);
     }
 
+    public HashMap<String,User> getUsers(){
+        return this.users;
+    }
+
     public boolean canWithdraw(BankAccount account, User user) {
 
         if (account instanceof AdministratorAccount || user.getAge() < 18)

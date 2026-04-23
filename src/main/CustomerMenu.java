@@ -14,6 +14,8 @@ public class CustomerMenu {
     public void run() {
 
         selectAccount();
+        
+        ((CustomerAccount) currentAccount).warnUser();
 
         int selection = -1;
 

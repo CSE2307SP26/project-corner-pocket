@@ -31,16 +31,7 @@ public class MainMenu {
 
                 case 1 -> createUser();
 
-                case 2 -> {
-                    loginUser();
-
-                    if (currentUser != null) {
-                        routeToMenu();
-
-                        // logout after submenu finishes
-                        currentUser = null;
-                    }
-                }
+                case 2 -> loginUser();
 
                 case 3 -> System.exit(0);
             }
@@ -66,20 +57,26 @@ public class MainMenu {
         System.out.print("Admin? (true/false): ");
         boolean isAdmin = keyboardInput.nextBoolean();
 
-        if (isAdmin) {
-            System.out.println("Admin users must be created by an existing administrator.");
-            return;
-        }
-
         try {
-            bank.createUser(username, password, false, age);
+            bank.createUser(username, password, isAdmin, age);
+
+            User user = bank.getUser(username);
+            user.addAccount(new CustomerAccount(username));
+
             System.out.println("User created successfully.");
+
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
     }
 
     private void loginUser() {
+
+        System.out.println("\nAvailable users:");
+
+        for (User u : bank.getUsers().values()) {
+            System.out.println("- " + u.getUsername());
+        }
 
         System.out.print("Username: ");
         String username = keyboardInput.next();
@@ -90,7 +87,10 @@ public class MainMenu {
         User user = bank.getUser(username);
 
         if (user != null && user.checkPassword(password)) {
+
             currentUser = user;
+            routeToMenu();
+
         } else {
             System.out.println("Login failed.");
         }
@@ -98,20 +98,10 @@ public class MainMenu {
 
     private void routeToMenu() {
 
-        if (currentUser == null) return;
-
-        if (currentUser.getAccounts().isEmpty()) {
-            System.out.println("No accounts found for this user.");
-            return;
-        }
-
-        BankAccount firstAccount =
-                currentUser.getAccounts().values().iterator().next();
-
-        if (firstAccount instanceof CustomerAccount) {
-            new CustomerMenu(currentUser, this).run();
-        } else {
+        if (currentUser.isAdmin()) {
             new AdminMenu(currentUser, this).run();
+        } else {
+            new CustomerMenu(currentUser, this).run();
         }
     }
 
@@ -126,10 +116,6 @@ public class MainMenu {
 
         return sel;
     }
-
-    public User getCurrentUser() {
-    return currentUser;
-}
 
     public static void main(String[] args) {
         new MainMenu().run();

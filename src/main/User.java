@@ -51,6 +51,10 @@ public class User {
     accounts.put(account.getAccountName(), account);
 }
 
+    public boolean isAdmin(){
+        return this.isAdmin;
+    }
+
     public void createAccount(String accountName, boolean isAdmin, Bank bank, String accountType) {
 
     BankAccount account;
