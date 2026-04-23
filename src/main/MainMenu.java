@@ -20,12 +20,17 @@ public class MainMenu {
 
         while (selection != 3) {
 
-            System.out.println("\nWelcome to the 237 Bank App!");
-            System.out.println("1. Create user");
-            System.out.println("2. Login");
-            System.out.println("3. Exit");
-
-            selection = getUserSelection(3);
+       if(currentAccount == null){
+        switch (selection){
+            case 1: 
+                createAccount();
+                break;
+            
+            case 2: 
+                switchAccount();
+                break; 
+            case 3:
+                System.exit(0); 
 
             switch (selection) {
 
@@ -117,7 +122,12 @@ public class MainMenu {
 
     int getUserSelection(int max) {
 
-        int sel = -1;
+        HashMap<String, BankAccount> accounts = bank.getAccounts();
+        
+        if(accounts.size() > 0){
+        for (String username : accounts.keySet()) {
+            System.out.println("user: " + username);
+        }
 
         while (sel < 1 || sel > max) {
             System.out.print("Select: ");

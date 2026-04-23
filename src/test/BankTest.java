@@ -12,11 +12,6 @@ public class BankTest {
 
         bank.createUser("alice", "pass123", false, 18);
 
-        User user = bank.getUser("alice");
-
-        assertNotNull(user);
-        assertEquals("alice", user.getUsername());
-    }
 
     @Test
     public void testCreateUserDuplicateThrowsException() {

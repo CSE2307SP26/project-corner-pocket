@@ -157,7 +157,47 @@ public class BankAccountTest {
     @Test
     public void testInvalidPayInterestGreaterThanBankVault(){
 
-        Bank bank = new Bank(10);
+   @Test
+   public void testPayInterest() {
+       Bank bank = new Bank(20.00);
+       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
+       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+       customerAccount.deposit(100.00);
+       adminAccount.payInterest(customerAccount, 10);
+       bank.setBankVaultBalance(adminAccount.updateBankVault());
+       assertEquals(110.00, customerAccount.getBalance(), 0.05);
+       assertEquals(10.00, bank.getBankVaultBalance(), 0.05);
+   }
+    
+   @Test
+   public void testPayLoan() {
+
+       Bank bank = new Bank(20.00);
+       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
+       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+       customerAccount.deposit(100.00);
+       customerAccount.setLoanAmount(20.00);
+       customerAccount.payLoan(adminAccount, 20.00);
+       bank.setBankVaultBalance(adminAccount.updateBankVault());
+       assertEquals(80.00, customerAccount.getBalance(), 0.05);
+       assertEquals(0.00, customerAccount.getLoanAmount(), 0.05);
+       assertEquals(40.00, bank.getBankVaultBalance(), 0.05);
+   }
+
+  @Test
+   public void testGiveLoan() {
+
+       Bank bank = new Bank(100.00);
+       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123",100.00);
+       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+       customerAccount.deposit(100.00);
+       adminAccount.giveLoan(customerAccount, 50.00, 8);
+       bank.setBankVaultBalance(adminAccount.updateBankVault());
+       assertEquals(146.00, customerAccount.getBalance(), 0.05);
+       assertEquals(54.00, bank.getBankVaultBalance(), 0.05);
+       assertEquals(50.00, customerAccount.getLoanAmount(), 0.05);
+   }
+
 
         CustomerAccount acc = new CustomerAccount("c");
         acc.deposit(100);
