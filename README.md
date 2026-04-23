@@ -1,5 +1,8 @@
 # project26
 
+I was not able to merge branches correctly, there would be residual changes from other branches that were fixed during development so I had to do git reset --hard and --force to get the main
+and development branchees properly updated.
+
 Authors: 
 
   Emmett Dennis
