@@ -1,124 +1,216 @@
 package test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import main.AdministratorAccount;
-import main.Bank;
-import main.CustomerAccount;
-
-import org.junit.jupiter.api.Test;
-
-import junit.framework.AssertionFailedError;
+import main.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
 
 public class BankTest {
-    
+
     @Test
-    public void testCloseAccountSize(){
-            Bank bank = new Bank(20.00);
-            bank.createAccount(false, "testAccount", null);
-            bank.createAccount(false, "testAccount2", null);
-            bank.closeAccount("testAccount2");
+    public void testCreateUserValid() {
+        Bank bank = new Bank(1000);
 
-            assertEquals(2, bank.getAccounts().size());
+        bank.createUser("alice", "pass123", false, 18);
 
+        User user = bank.getUser("alice");
+
+        assertNotNull(user);
+        assertEquals("alice", user.getUsername());
     }
 
     @Test
-    public void testCloseInvalidAccount(){
-            Bank bank = new Bank(20.00);
-            bank.createAccount(false, "testAccount", null);
-            try {
-                bank.closeAccount("testAccount2");
-                fail();
-            } 
-            catch (IllegalArgumentException e) {
-                //do nothing, test passes
-            }
-    }
+    public void testCreateUserDuplicateThrowsException() {
+        Bank bank = new Bank(1000);
 
-    @Test
-    public void testCreateAccount() {
-        Bank bank = new Bank(20.00);
+        bank.createUser("bob", "pass", false, 18);
 
-        bank.createAccount(false, "testAccount", "password123");
-
-        assertEquals(2, bank.getAccounts().size());
-    }
-
-    @Test
-    public void testCreateAccountWithDuplicateUsername(){
-
-        Bank bank = new Bank(20.00);
-        try{
-            bank.createAccount(false, "testAccount", null);
-            bank.createAccount(false, "testAccount", null);
-            fail();
-        }
-        catch(IllegalArgumentException e){
-            //do nothing, test passes
+        try {
+            bank.createUser("bob", "pass2", false, 18);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("User exists", e.getMessage());
         }
     }
 
     @Test
-    public void testCreateCustomerAccount(){
-        Bank bank = new Bank(20.00);
+    public void testDepositToVaultValid() {
+        Bank bank = new Bank(500);
 
-        bank.createAccount(false, "testAccount", "password123");
+        bank.depositToVault(200);
 
-        assertEquals(true, bank.getAccounts().get("testAccount") instanceof CustomerAccount);
+        assertEquals(700, bank.getBankVaultBalance(), 0.0001);
     }
 
     @Test
-    public void testCreateCustomerAccountWithoutPassword(){
+    public void testDepositToVaultInvalid() {
+        Bank bank = new Bank(500);
+
+        try {
+            bank.depositToVault(-50);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testWithdrawFromVaultValid() {
+        Bank bank = new Bank(500);
+
+        bank.withdrawFromVault(200);
+
+        assertEquals(300, bank.getBankVaultBalance(), 0.0001);
+    }
+
+    @Test
+    public void testWithdrawFromVaultInsufficientFunds() {
+        Bank bank = new Bank(100);
+
+        try {
+            bank.withdrawFromVault(500);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Insufficient vault funds", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testTransferInvalidAmount() {
+        Bank bank = new Bank(1000);
+
+        CustomerAccount acc1 = new CustomerAccount("Checking");
+        CustomerAccount acc2 = new CustomerAccount("Checking");
+
+        try {
+            bank.transfer(acc1, acc2, -10);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testTransferToVaultValid() {
+        Bank bank = new Bank(500);
+
+        User user = new User("user", "pass", false, 18);
+
+        CustomerAccount acc = new CustomerAccount("Checking");
+        acc.deposit(300);
+
+        bank.transferToVault(acc, user,  200);
+
+        assertEquals(100, acc.getBalance(), 0.0001);
+        assertEquals(700, bank.getBankVaultBalance(), 0.0001);
+    }
+
+    @Test
+    public void testCanWithdrawInvalidAge() {
+
+        Bank bank = new Bank(500);
+        CustomerAccount acc = new CustomerAccount("test");
+        acc.deposit(50);
+        User user = new User("user1", "password123", false, 17);
         
-        Bank bank = new Bank(20.00);
-
-        bank.createAccount(false, "testAccount", null);
-
-        assertEquals(null, bank.getAccounts().get("testAccount").getPassword());
+        assertEquals(false, bank.canWithdraw(acc, user));
 
     }
 
     @Test
-    public void testCreateAdminAccount(){
+    public void testTransferToVaultInvalid() {
+        Bank bank = new Bank(500);
 
-        Bank bank = new Bank(20.00);
+        User user = new User("user", "pass", false, 18);
 
-        bank.createAccount(true, "testAccount", "password123");
+        CustomerAccount acc = new CustomerAccount("Checking");
 
-        assertEquals(true, bank.getAccounts().get("testAccount") instanceof AdministratorAccount);
-
-
+        try {
+            bank.transferToVault(acc, user, -50);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     @Test
-    public void testTwoTransfersDifferentAdministrator(){
+public void testCanWithdrawValid() {
 
-        Bank bank = new Bank(200.00);
-        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
-        AdministratorAccount administratorAccount = new AdministratorAccount("administratorAccount", "password123", 200.00);
-        AdministratorAccount administratorAccount2 = new AdministratorAccount("administratorAccount2", "password123", 200.00);
+    Bank bank = new Bank(1000);
 
-        administratorAccount.transferMoney(customerAccount, 50.00);
-        bank.setBankVaultBalance(administratorAccount.updateBankVault());
-        administratorAccount2.updateLocalBankVault(bank.getBankVaultBalance());
-        administratorAccount2.transferMoney(customerAccount, 50.00);
-        bank.setBankVaultBalance(administratorAccount2.updateBankVault());
+    CustomerAccount acc = new CustomerAccount("acc");
+    acc.setAccountType("Normal Account");
 
-        assertEquals(100.00, customerAccount.getBalance(), 0.05);
-        assertEquals(100.00, bank.getBankVaultBalance(), 0.05);
+    User user = new User("user", "pass", false, 20);
+
+    assertTrue(bank.canWithdraw(acc, user));
+}
+
+@Test
+public void testCanWithdrawEducationalAccountBlocked() {
+
+    Bank bank = new Bank(1000);
+
+    CustomerAccount acc = new CustomerAccount("acc");
+    acc.setAccountType("Educational Account");
+
+    User user = new User("user", "pass", false, 20);
+
+    assertFalse(bank.canWithdraw(acc, user));
+}
+
+@Test
+public void testCanWithdrawAdminAccountBlocked() {
+
+    Bank bank = new Bank(1000);
+
+    AdministratorAccount acc = new AdministratorAccount("admin", bank);
+
+    User user = new User("user", "pass", false, 20);
+
+    assertFalse(bank.canWithdraw(acc, user));
+}
+
+@Test
+public void testCanTransferValid() {
+
+    Bank bank = new Bank(1000);
+
+    CustomerAccount from = new CustomerAccount("from");
+    from.setAccountType("Normal Account");
+
+    CustomerAccount to = new CustomerAccount("to");
+    to.setAccountType("Normal Account");
+
+    assertTrue(bank.canTransfer(from, to));
+}
+
+@Test
+public void testCanTransferInvestmentAccountFromBlocked() {
+
+    Bank bank = new Bank(1000);
+
+    CustomerAccount from = new CustomerAccount("from");
+    from.setAccountType("Investment Account");
+
+    CustomerAccount to = new CustomerAccount("to");
+    to.setAccountType("Normal Account");
+
+    assertFalse(bank.canTransfer(from, to));
+}
+
+@Test
+public void testCanTransferEducationalAccountToBlocked() {
+
+    Bank bank = new Bank(1000);
+
+    CustomerAccount from = new CustomerAccount("from");
+    from.setAccountType("Normal Account");
+
+    CustomerAccount to = new CustomerAccount("to");
+    to.setAccountType("Educational Account");
+
+    assertFalse(bank.canTransfer(from, to));
+}
 
 
-
-    }
-
-
-
-
-
-        
-
-
-    
 }

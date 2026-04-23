@@ -1,220 +1,178 @@
 package test;
 
-
-import main.CustomerAccount;
-import main.AdministratorAccount;
-import main.Bank;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import org.junit.jupiter.api.Test;
-
-
+import main.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class BankAccountTest {
 
+
     @Test
     public void testDeposit() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        testAccount.deposit(50);
-        assertEquals(50, testAccount.getBalance(), 0.01);
+        CustomerAccount acc = new CustomerAccount("test");
+        acc.deposit(50);
+        assertEquals(50, acc.getBalance(), 0.01);
     }
 
-   
     @Test
     public void testInvalidDeposit() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        try {
-            testAccount.deposit(-50);
-            fail();
-        } catch (IllegalArgumentException e) {
-            //do nothing, test passes
-        }
-    }
+        CustomerAccount acc = new CustomerAccount("test");
 
+        assertThrows(IllegalArgumentException.class, () -> {
+            acc.deposit(-50);
+        });
+    }
 
     @Test
     public void testWithdraw() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        testAccount.deposit( 50);
-        testAccount.withdraw(30);
-        assertEquals(20, testAccount.getBalance(), 0.01);
+        CustomerAccount acc = new CustomerAccount("test");
+        acc.deposit(50);
+        acc.withdraw(30);
+        assertEquals(20, acc.getBalance(), 0.01);
     }
 
     @Test
-    public void testInvalidWithdraw1() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        testAccount.deposit( 50);
-        testAccount.withdraw(500);
-        assertEquals(0, testAccount.getBalance(), 0.01);
-    }
+    public void testInvalidWithdraw() {
+        CustomerAccount acc = new CustomerAccount("test");
+        acc.deposit(50);
 
-    @Test
-    public void testInvalidWithdraw2() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        try {
-            testAccount.withdraw(-50);
-            fail();
-        } catch (IllegalArgumentException e) {
-            //do nothing, test passes
-        }
+        assertThrows(IllegalArgumentException.class, () -> {
+            acc.withdraw(-10);
+        });
     }
 
     @Test
     public void testTransactionHistory() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        testAccount.deposit( 50);
-        assertEquals("Deposited: $50.0", testAccount.getTransactionHistory().get(0));
+        CustomerAccount acc = new CustomerAccount("test");
+        acc.deposit(50);
 
+        assertEquals("Deposited: $50.0",
+                acc.getTransactionHistory().get(0));
     }
 
     @Test
-    public void testPasswordSet() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        testAccount.setPassword("password123");
-        assertEquals("password123", testAccount.getPassword());
+    public void testTransferBetweenCustomers() {
+        Bank bank = new Bank(50.0);
+        CustomerAccount a = new CustomerAccount("a");
+        CustomerAccount b = new CustomerAccount("b");
+
+        a.deposit(10);
+        bank.transfer(a, b, 10);
+
+        assertEquals(0, a.getBalance(), 0.01);
+        assertEquals(10, b.getBalance(), 0.01);
     }
 
     @Test
-    public void testPasswordReset() {
-        CustomerAccount testAccount = new CustomerAccount("testAccount");
-        testAccount.setPassword("password123");
-        testAccount.resetPassword();
-        assertEquals(null, testAccount.getPassword());
+    public void testBalanceLow() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        CustomerAccount a = new CustomerAccount("a");
+        a.deposit(10);
+
+        a.warnUser();
+
+        System.setOut(System.out); // restore stdout
+        assertEquals("WARNING: account balance low.", outputStream.toString().trim());
+        
     }
 
 
+
     @Test
-    public void testTransferBetweenTwoCustomers() {
+    public void testGiveLoan() {
+        Bank bank = new Bank(100);
 
-        CustomerAccount testAccount1 = new CustomerAccount("testAccount1");
+        User adminUser = bank.getUser("root");
 
-        CustomerAccount testAccount2 = new CustomerAccount("testAccount2");
+        CustomerAccount acc = new CustomerAccount("c");
 
-        testAccount1.deposit(3.00);
+        ((AdministratorAccount) adminUser.getAccounts().get("root")).giveLoan(acc, 50, 10);
 
-        testAccount1.transferMoney(testAccount2, 3.00);
-
-        assertEquals(3.00, testAccount2.getBalance(), 0.05);
-
+        assertEquals(50, acc.getBalance(), 0.01);
+        assertEquals(50, bank.getBankVaultBalance(), 0.01);
+        assertEquals(55, acc.getLoanAmount(), 0.01);
     }
 
     @Test
-    public void testTransferFromBankToCustomer(){
-        Bank bank = new Bank(20.00);
-        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
-        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+    public void testCollectFees() {
+        Bank bank = new Bank(100);
 
-        adminAccount.transferMoney(customerAccount, 10.00);
-        bank.setBankVaultBalance(adminAccount.updateBankVault());
+        CustomerAccount acc = new CustomerAccount("c");
+        acc.deposit(100);
 
-        assertEquals(10.00, customerAccount.getBalance(), 0.05);
-        assertEquals(10.00, bank.getBankVaultBalance(), 0.05);
+        User adminUser = bank.getUser("root");
+        AdministratorAccount admin =
+                (AdministratorAccount) adminUser.getAccounts().get("root");
+
+        admin.collectFees(acc, 20);
+
+        assertEquals(80, acc.getBalance(), 0.01);
+        assertEquals(120, bank.getBankVaultBalance(), 0.01);
     }
 
     @Test
-    public void testTransferFromCustomerToBank(){
-        Bank bank = new Bank(0.00);
-        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 0.00);
-        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
+    public void testPayInterest() {
+        Bank bank = new Bank(100);
 
-        customerAccount.deposit(20.00);
+        CustomerAccount acc = new CustomerAccount("c");
+        acc.setAccountType("Normal");
+        acc.deposit(100);
 
-        customerAccount.transferMoney(adminAccount, 10.00);
-        bank.setBankVaultBalance(adminAccount.updateBankVault());
+        User adminUser = bank.getUser("root");
+        AdministratorAccount admin =
+                (AdministratorAccount) adminUser.getAccounts().get("root");
 
-        assertEquals(10.00, customerAccount.getBalance(), 0.05);
-        assertEquals(10.00, bank.getBankVaultBalance(), 0.05);
+        admin.payInterest(acc, 10);
 
+        assertEquals(110, acc.getBalance(), 0.01);
+        assertEquals(90, bank.getBankVaultBalance(), 0.01);
     }
 
     @Test
-    public void testTransferFromVaultToVault(){ //vault should remain the same in this case
+    public void testInvalidPayInterestWithInvalidRate(){
 
-        AdministratorAccount adminAccount1 = new AdministratorAccount("adminAccount1", "password123", 20.00);
-        AdministratorAccount adminAccount2 = new AdministratorAccount("adminAccount2", "password123", 20.00);
+        Bank bank = new Bank(100);
+
+        CustomerAccount acc = new CustomerAccount("c");
+        acc.deposit(100);
+
+        User adminUser = bank.getUser("root");
+        AdministratorAccount admin =
+                (AdministratorAccount) adminUser.getAccounts().get("root");
+
         try{
-            adminAccount1.transferMoney(adminAccount2, 10.00);
+            admin.payInterest(acc, 1000);
             fail();
         }
-        catch(IllegalArgumentException e){
-            //do nothing test passes
+        catch(Exception e){
+            //test passes
         }
-        
 
     }
-    
 
-   @Test
-    public void testCollectFees() {
-        Bank bank = new Bank(20.00);
-        AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
-        CustomerAccount customerAccount = new CustomerAccount("customerAccount");
-        customerAccount.deposit(20.00);
-        adminAccount.collectFees(customerAccount, 10.00);
-        bank.setBankVaultBalance(adminAccount.updateBankVault());
-        assertEquals(10.00, customerAccount.getBalance(), 0.05);
-        assertEquals(30.00, bank.getBankVaultBalance(), 0.05);
-        
+    @Test
+    public void testInvalidPayInterestGreaterThanBankVault(){
+
+        Bank bank = new Bank(10);
+
+        CustomerAccount acc = new CustomerAccount("c");
+        acc.deposit(100);
+
+        User adminUser = bank.getUser("root");
+        AdministratorAccount admin =
+                (AdministratorAccount) adminUser.getAccounts().get("root");
+
+        try{
+            admin.payInterest(acc, 20);
+            fail();
+        }
+        catch(Exception e){
+            //test passes
+        }
+
     }
-
-   @Test
-   public void testPayInterest() {
-       Bank bank = new Bank(20.00);
-       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
-       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
-       customerAccount.deposit(100.00);
-       adminAccount.payInterest(customerAccount, 10);
-       bank.setBankVaultBalance(adminAccount.updateBankVault());
-       assertEquals(110.00, customerAccount.getBalance(), 0.05);
-       assertEquals(10.00, bank.getBankVaultBalance(), 0.05);
-   }
-    
-   @Test
-   public void testPayLoan() {
-       
-       Bank bank = new Bank(20.00);
-       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
-       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
-       customerAccount.deposit(100.00);
-       customerAccount.setLoanAmount(20.00);
-       customerAccount.payLoan(adminAccount, 20.00);
-       bank.setBankVaultBalance(adminAccount.updateBankVault());
-       assertEquals(80.00, customerAccount.getBalance(), 0.05);
-       assertEquals(0.00, customerAccount.getLoanAmount(), 0.05);
-       assertEquals(40.00, bank.getBankVaultBalance(), 0.05);
-  @Test
-   public void testGiveLoan() {
-
-       Bank bank = new Bank(100.00);
-       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123",100.00);
-       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
-       customerAccount.deposit(100.00);
-       adminAccount.giveLoan(customerAccount, 50.00, 8);
-       bank.setBankVaultBalance(adminAccount.updateBankVault());
-       assertEquals(146.00, customerAccount.getBalance(), 0.05);
-       assertEquals(54.00, bank.getBankVaultBalance(), 0.05);
-       assertEquals(50.00, customerAccount.getLoanAmount(), 0.05);
-   }
-
-   @Test
-   public void testPayLoan() {
-       
-       Bank bank = new Bank(20.00);
-       AdministratorAccount adminAccount = new AdministratorAccount("adminAccount", "password123", 20.00);
-       CustomerAccount customerAccount = new CustomerAccount("customerAccount");
-       customerAccount.deposit(100.00);
-       customerAccount.setLoanAmount(20.00);
-       customerAccount.payLoan(adminAccount, 20.00);
-       bank.setBankVaultBalance(adminAccount.updateBankVault());
-       assertEquals(80.00, customerAccount.getBalance(), 0.05);
-       assertEquals(0.00, customerAccount.getLoanAmount(), 0.05);
-       assertEquals(40.00, bank.getBankVaultBalance(), 0.05);
-   }
-
-
-
 }
-
-
