@@ -61,7 +61,14 @@ public class MainMenu {
             bank.createUser(username, password, isAdmin, age);
 
             User user = bank.getUser(username);
-            user.addAccount(new CustomerAccount(username));
+            if(!isAdmin){
+                user.addAccount(new CustomerAccount(username));
+                user.getAccounts().get(username).setAccountType("Normal");
+            }
+            else{
+                user.addAccount(new AdministratorAccount(username, bank));
+                user.getAccounts().get(username).setAccountType("Administrator");
+            }
 
             System.out.println("User created successfully.");
 

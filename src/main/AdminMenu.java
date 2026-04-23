@@ -2,9 +2,11 @@ package main;
 
 public class AdminMenu {
 
-    private User currentUser;
+    private User currentUser;      
     private MainMenu menu;
-    private BankAccount currentAccount;
+
+    private User targetUser;         
+    private BankAccount targetAccount; 
 
     public AdminMenu(User currentUser, MainMenu menu) {
         this.currentUser = currentUser;
@@ -12,8 +14,6 @@ public class AdminMenu {
     }
 
     public void run() {
-
-        selectAccount();
 
         int selection = -1;
 
@@ -25,25 +25,35 @@ public class AdminMenu {
         }
     }
 
+
+
     private void displayMenu() {
 
         System.out.println("\nAdministrator: " + currentUser.getUsername());
-        System.out.println("Active Account: " + currentAccount.getAccountName());
 
-        System.out.println("1. Create account");
+        if (targetUser != null && targetAccount != null) {
+            System.out.println("Selected User: " + targetUser.getUsername());
+            System.out.println("Selected Account: " + targetAccount.getAccountName());
+        } else {
+            System.out.println("No user/account selected.");
+        }
+
+        System.out.println("1. Create account (for user)");
         System.out.println("2. Close account");
         System.out.println("3. Collect fees");
         System.out.println("4. Pay interest");
         System.out.println("5. Issue loan");
-        System.out.println("6. Switch account");
+        System.out.println("6. Select user & account");
         System.out.println("7. Set password");
         System.out.println("8. Reset password");
         System.out.println("9. Logout");
     }
 
+
+
     private void process(int selection) {
 
-        AdministratorAccount admin = (AdministratorAccount) currentAccount;
+        AdministratorAccount admin = getAdminAccount();
 
         switch (selection) {
 
@@ -57,7 +67,7 @@ public class AdminMenu {
 
             case 5 -> issueLoan(admin);
 
-            case 6 -> selectAccount();
+            case 6 -> selectUserAndAccount();
 
             case 7 -> setPassword();
 
@@ -65,16 +75,93 @@ public class AdminMenu {
         }
     }
 
+
+
+    private AdministratorAccount getAdminAccount() {
+
+        for (BankAccount acc : currentUser.getAccounts().values()) {
+            if (acc instanceof AdministratorAccount) {
+                return (AdministratorAccount) acc;
+            }
+        }
+
+        throw new IllegalStateException("No admin account found.");
+    }
+
+
+
+    private void selectUserAndAccount() {
+
+        while (true) {
+
+            System.out.println("\nAvailable users:");
+
+            for (User user : menu.bank.getUsers().values()) {
+                System.out.println("- " + user.getUsername());
+            }
+
+            System.out.print("Select user: ");
+            String username = menu.keyboardInput.next();
+
+            User selectedUser = menu.bank.getUser(username);
+
+            if (selectedUser == null) {
+                System.out.println("User not found. Try again.");
+                continue;
+            }
+
+            if (selectedUser.getAccounts().isEmpty()) {
+                System.out.println("User has no accounts.");
+                continue;
+            }
+
+            targetUser = selectedUser;
+
+
+            while (true) {
+
+                System.out.println("\nAccounts for " + targetUser.getUsername() + ":");
+
+                for (BankAccount acc : targetUser.getAccounts().values()) {
+                    System.out.println("- " + acc.getAccountName());
+                }
+
+                System.out.print("Select account: ");
+                String accName = menu.keyboardInput.next();
+
+                BankAccount selectedAcc = targetUser.getAccounts().get(accName);
+
+                if (selectedAcc != null) {
+                    targetAccount = selectedAcc;
+                    return;
+                }
+
+                System.out.println("Account not found. Try again.");
+            }
+        }
+    }
+
+
     private void createAccount() {
+
+        System.out.print("User for account: ");
+        String username = menu.keyboardInput.next();
+
+        User user = menu.bank.getUser(username);
+
+        if (user == null) {
+            System.out.println("User not found.");
+            return;
+        }
 
         System.out.print("Account name: ");
         String name = menu.keyboardInput.next();
 
-        System.out.print("Admin account? (true/false): ");
-        boolean isAdmin = menu.keyboardInput.nextBoolean();
+        System.out.print("Account type: ");
+        String type = menu.keyboardInput.next();
 
         try {
-            currentUser.createAccount(name, isAdmin, menu.bank, "Administrator Account");
+            user.createAccount(name, false, menu.bank, type);
             System.out.println("Account created successfully.");
         } catch (IllegalArgumentException e) {
             System.out.println("Could not create account: " + e.getMessage());
@@ -82,18 +169,19 @@ public class AdminMenu {
     }
 
     private void closeAccount() {
-        currentUser.removeAccount(currentAccount);
-        currentAccount = null;
+
+        if (targetUser == null || targetAccount == null) {
+            System.out.println("No account selected.");
+            return;
+        }
+
+        targetUser.removeAccount(targetAccount);
+        targetAccount = null;
     }
 
     private void collectFees(AdministratorAccount admin) {
 
-        System.out.print("From account: ");
-        String name = menu.keyboardInput.next();
-
-        BankAccount target = currentUser.getAccounts().get(name);
-
-        if (!(target instanceof CustomerAccount account)) {
+        if (!(targetAccount instanceof CustomerAccount acc)) {
             System.out.println("Invalid customer account.");
             return;
         }
@@ -101,17 +189,12 @@ public class AdminMenu {
         System.out.print("Amount: ");
         double amount = menu.keyboardInput.nextDouble();
 
-        admin.collectFees(account, amount);
+        admin.collectFees(acc, amount);
     }
 
     private void payInterest(AdministratorAccount admin) {
 
-        System.out.print("Customer account: ");
-        String name = menu.keyboardInput.next();
-
-        BankAccount target = currentUser.getAccounts().get(name);
-
-        if (!(target instanceof CustomerAccount account)) {
+        if (!(targetAccount instanceof CustomerAccount acc)) {
             System.out.println("Invalid customer account.");
             return;
         }
@@ -119,17 +202,12 @@ public class AdminMenu {
         System.out.print("Rate: ");
         int rate = menu.keyboardInput.nextInt();
 
-        admin.payInterest(account, rate);
+        admin.payInterest(acc, rate);
     }
 
     private void issueLoan(AdministratorAccount admin) {
 
-        System.out.print("Customer account: ");
-        String name = menu.keyboardInput.next();
-
-        BankAccount target = currentUser.getAccounts().get(name);
-
-        if (!(target instanceof CustomerAccount account)) {
+        if (!(targetAccount instanceof CustomerAccount acc)) {
             System.out.println("Invalid customer account.");
             return;
         }
@@ -140,39 +218,27 @@ public class AdminMenu {
         System.out.print("Interest rate: ");
         int rate = menu.keyboardInput.nextInt();
 
-        admin.giveLoan(account, amount, rate);
+        admin.giveLoan(acc, amount, rate);
     }
 
     private void setPassword() {
+
+        if (targetUser == null) {
+            System.out.println("No user selected.");
+            return;
+        }
+
         System.out.print("New password: ");
-        currentUser.setPassword(menu.keyboardInput.next());
+        targetUser.setPassword(menu.keyboardInput.next());
     }
 
     private void resetPassword() {
-        currentUser.setPassword(null);
-    }
 
-    private void selectAccount() {
-
-        while (true) {
-
-            System.out.println("\nYour accounts:");
-
-            for (BankAccount acc : currentUser.getAccounts().values()) {
-                System.out.println("- " + acc.getAccountName());
-            }
-
-            System.out.print("Select account: ");
-            String name = menu.keyboardInput.next();
-
-            BankAccount selected = currentUser.getAccounts().get(name);
-
-            if (selected != null) {
-                currentAccount = selected;
-                return;
-            }
-
-            System.out.println("Account not found. Try again.");
+        if (targetUser == null) {
+            System.out.println("No user selected.");
+            return;
         }
+
+        targetUser.setPassword(null);
     }
 }
