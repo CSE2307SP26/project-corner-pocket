@@ -51,6 +51,19 @@ public class User {
     accounts.put(account.getAccountName(), account);
 }
 
+    public void createAccount(String accountName, boolean isAdmin, Bank bank) {
+
+    BankAccount account;
+
+    if (isAdmin) {
+        account = new AdministratorAccount(accountName, bank);
+    } else {
+        account = new CustomerAccount(accountName);
+    }
+
+        addAccount(account);
+    }
+
     public void removeAccount(BankAccount account) {
         if(!accounts.containsValue(account)){
             System.out.println("There is no such account!");
