@@ -127,6 +127,10 @@ public class MainMenu {
         return sel;
     }
 
+    public User getCurrentUser() {
+    return currentUser;
+}
+
     public static void main(String[] args) {
         new MainMenu().run();
     }

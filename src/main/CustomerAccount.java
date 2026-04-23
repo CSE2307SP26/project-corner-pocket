@@ -40,9 +40,30 @@ public class CustomerAccount extends BankAccount {
         this.loanAmount = loanAmount;
     }
 
-    public void payLoan(double amount){
+    public void payLoan(double amount) {
 
+    if (amount <= 0) {
+        throw new IllegalArgumentException("Payment must be greater than 0");
     }
+
+    if (loanAmount <= 0) {
+        throw new IllegalArgumentException("No loan to pay off");
+    }
+
+    if (balance < amount) {
+        throw new IllegalArgumentException("Insufficient funds to pay loan");
+    }
+    double actualPayment = Math.min(amount, loanAmount);
+
+    balance -= actualPayment;
+    loanAmount -= actualPayment;
+
+    transactionHistory.add("Loan payment: $" + actualPayment);
+
+    if (loanAmount == 0) {
+        transactionHistory.add("Loan fully paid off");
+    }
+}
     
     public void warnUser() {
         if (this.balance < 50) {

@@ -40,7 +40,7 @@ public class AdminMenu {
         System.out.println("8. Reset password");
         System.out.println("9. Logout");
     }
-    
+
     private void process(int selection) {
 
         AdministratorAccount admin = (AdministratorAccount) currentAccount;
@@ -74,7 +74,7 @@ public class AdminMenu {
         boolean isAdmin = menu.keyboardInput.nextBoolean();
 
         try {
-            currentUser.createAccount(name, isAdmin, menu.bank);
+            currentUser.createAccount(name, isAdmin, menu.bank, "Administrator Account");
             System.out.println("Account created successfully.");
         } catch (IllegalArgumentException e) {
             System.out.println("Could not create account: " + e.getMessage());
